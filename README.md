@@ -1,0 +1,51 @@
+# astack
+
+The agent instructions and skills I use every day. They work in Claude Code and Codex.
+
+## Skills
+
+| Skill | Say | What it does |
+|---|---|---|
+| `ship` | "ship the next issue" | Takes a GitHub issue to a merged PR: branch, fix, checks, independent review, merge, and cleanup. |
+| `review` | "review this PR" | Reviews a PR, branch, commit, or diff for bugs and merge safety, ranked by risk. |
+| `audit` | "audit this" | Finds tech debt and architecture problems with `path:line` evidence, and files issues when asked. |
+| `verify` | "prove this invariant" | Checks a property with contracts, property tests, model checking, or a Lean proof. |
+| `design` | "design a page" | Writes a brief, hands it to a design subagent, and checks the page at four widths, in dark mode, and with reduced motion. |
+| `engineering` | (automatic) | Working rules for code: the simplest fix, no comments, behaviour tests, and the checks each change needs. |
+| `unslop` | (automatic) | Rules for plain prose: no AI vocabulary, no dashes, and one idea per sentence. |
+| `instructions` | (automatic) | Rules for writing and pruning `AGENTS.md` and `SKILL.md` files. |
+
+`AGENTS.md` holds the rules for every session: communication, safety, and when to load `unslop`, `engineering`, and `instructions`.
+
+Some skills call others. Install the ones they need too:
+
+- `ship` and `audit` use `review`.
+- `review` uses `verify`.
+- `engineering` uses `review`, `verify`, `ship`, and `unslop`.
+
+## Install
+
+```bash
+git clone https://github.com/arhamgarg/astack
+cp -R astack/skills/* ~/.claude/skills/
+cp astack/AGENTS.md ~/.claude/CLAUDE.md
+cp -R astack/skills/* ~/.codex/skills/
+cp astack/AGENTS.md ~/.codex/AGENTS.md
+```
+
+## Requirements
+
+- An authenticated [GitHub CLI](https://cli.github.com) (`gh`) for `ship`, and for `audit` when it files issues.
+- Subagents for `design`, and for the reviewer that `ship` starts.
+- `uv`, `ruff`, and `ty` for Python work under `engineering`.
+- Lean 4 or Dafny for proofs in `verify`, when a property needs one.
+
+## Make them yours
+
+These are starting points. Edit them. Put personal settings in your project's `AGENTS.md`, which overrides the global one, so you can update the skills without losing them.
+
+Run `python3 check.py` before committing. It flags dashes, broken relative links, and `SKILL.md` frontmatter whose name differs from its directory.
+
+## License
+
+[AGPL-3.0](LICENSE)
