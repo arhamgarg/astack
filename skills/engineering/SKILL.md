@@ -29,7 +29,7 @@ Build complex things as simply as possible. In every problem, look for complexit
 
 ## Writing about code
 
-These rules add to `unslop` for text about code.
+These rules add to the [`unslop`](../unslop/SKILL.md) skill for text about code.
 
 - Write the real symbol, file, flag, or command, not a synonym or a description, and put it in code font.
 - Code and strings have no em or en dashes either.
@@ -39,7 +39,7 @@ These rules add to `unslop` for text about code.
 
 ## Testing
 
-- State the contract first, then choose evidence using the escalation ladder in `verify` when it applies. A failing example test is not required before every implementation. For a bug fix, capture a counterexample before changing behaviour and confirm the fix removes it. Build one behaviour end to end before starting the next.
+- State the contract first, then choose evidence using the escalation ladder in the [`verify`](../verify/SKILL.md) skill when it applies. A failing example test is not required before every implementation. For a bug fix, capture a counterexample before changing behaviour and confirm the fix removes it. Build one behaviour end to end before starting the next.
 - Keep behaviour tests for regressions, integration, and model-to-code agreement. Prefer property-based tests over example lists when a general rule defines the behaviour. Use them when proof costs more than it resolves, and report the property as tested, not proved. For end-to-end tests, choose a realistic (medium-to-hard) scenario that exercises the risk, never the simplest one. When testing a unit alone, list every way it can fail before writing the code.
 - When a change has a UI, open it and try to break it: empty input, double submit, refresh mid-action.
 - Test behaviour, not implementation: assert what a caller observes through the public interface, so a refactor that keeps behaviour keeps every test passing. Write or keep a test only when it pins behaviour no other test pins, either a realistic regression or an acceptance criterion. No tautological or change-detector tests. Add a regression test for a bug fix only when the behaviour tests have a real gap. Skip new examples that only repeat a machine-checked property when current evidence also establishes model-to-code agreement. Delete an existing test only with evidence that its protection is gone, duplicated, or ineffective. A proof of a separate model alone does not establish duplication.
@@ -58,4 +58,4 @@ The project `AGENTS.md` names the setup command, the fast gate, the full gate, t
 | Changes the project sends to QA | All of the above plus the QA gate. Open and inspect the generated artifacts. |
 | External-service behaviour | Every local check. Connected checks only when the user asks. |
 
-An interrupted, skipped, stale, or partial run is not a pass. Fix the failures your change caused and run again. Show evidence before you blame infrastructure. A remote result doesn't replace inspecting artifacts, and a local pass doesn't excuse a failing required remote check, except under the approval-evidence bootstrap in [ship](../ship/SKILL.md) step 9. Repeat or widen tests only when new changes, failures, or open questions call for it.
+An interrupted, skipped, stale, or partial run is not a pass. Fix the failures your change caused and run again. Show evidence before you blame infrastructure. A remote result doesn't replace inspecting artifacts, and a local pass doesn't excuse a failing required remote check, except under the approval-evidence bootstrap in the [`ship`](../ship/SKILL.md) skill's step 9. Repeat or widen tests only when new changes, failures, or open questions call for it.

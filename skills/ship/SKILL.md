@@ -5,7 +5,7 @@ description: Use when asked to fix, ship, or merge the next open GitHub issue, a
 
 # Issue-to-merge loop
 
-Resolve `<base>` and `<remote>` from, in order, the request, an existing PR, the project instructions, and the remote's default branch. Resolve the absolute path of the sibling [review skill](../review/SKILL.md) for the reviewer.
+Resolve `<base>` and `<remote>` from, in order, the request, an existing PR, the project instructions, and the remote's default branch. Resolve the absolute path of the sibling [`review`](../review/SKILL.md) skill for the reviewer.
 
 ## Invocation
 

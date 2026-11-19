@@ -44,7 +44,7 @@ If the check fails, translate the counterexample into code states and distinguis
 
 Skip new example tests and additional adversarial rounds that only repeat an established property. A replacement needs current evidence for both the property and its connection to the implementation. A bounded result replaces only cases inside its bounds. Keep behaviour regressions, integration checks, and tests of effects outside the model. Delete an existing test only after identifying equivalent protection for every behaviour it covered.
 
-Critical changes retain one independent review of the specification, assumptions, model-to-code agreement, and uncovered risks. The [review skill](../review/SKILL.md) defines that review. Recheck fixes and changed evidence without reopening unchanged proofs. Preserve project gates and required head approvals.
+Critical changes retain one independent review of the specification, assumptions, model-to-code agreement, and uncovered risks. The [`review`](../review/SKILL.md) skill defines that review. Recheck fixes and changed evidence without reopening unchanged proofs. Preserve project gates and required head approvals.
 
 Finish with a compact evidence record in the task's existing verification report. Include each item below.
 

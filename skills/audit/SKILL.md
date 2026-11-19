@@ -30,7 +30,7 @@ Start with hot spots by churn × size from `git log --numstat`. Prioritize:
 - Change preventers: concepts requiring scattered edits, modules changing for unrelated reasons, migration duplicates, and distant files changing together.
 - Reader load: multi-hop data origins or mutations, pass-through wrappers, and modules adding only indirection.
 - Documentation: verify every documented path, command, and config key against code.
-- Hidden failures, bloat, and weak tests: apply user instructions and the sibling [review skill](../review/SKILL.md) test checklist.
+- Hidden failures, bloat, and weak tests: apply user instructions and the sibling [`review`](../review/SKILL.md) skill test checklist.
 
 ## Verify findings
 
