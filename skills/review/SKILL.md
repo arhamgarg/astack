@@ -28,7 +28,7 @@ Check the contract and evidence first. Focus adversarial probes on unproved beha
 
 ## 2. Inputs
 
-Read the base, head, full merge-base diff, linked issue and acceptance criteria, public APIs, and available verification results. For state machines, Critical logic, or formal evidence, read the [verify skill](../verify/SKILL.md). Identify missing inputs that block a conclusion. Continue without optional context when the repository answers the question.
+Read the base, head, full merge-base diff, linked issue and acceptance criteria, public APIs, and available verification results. For state machines, Critical logic, or formal evidence, read the [`verify`](../verify/SKILL.md) skill. Identify missing inputs that block a conclusion. Continue without optional context when the repository answers the question.
 
 ## 3. Procedure
 
@@ -58,7 +58,7 @@ Read the base, head, full merge-base diff, linked issue and acceptance criteria,
 - New rules, constants, parsers, and factories do not duplicate existing ones. Search before accepting.
 - Decision logic uses pure functions with I/O at the edges.
 - Enforceable constraints have checks.
-- Added text that breaks the [engineering skill](../engineering/SKILL.md) no-session-history rule is a LOW finding.
+- Added text that breaks the [`engineering`](../engineering/SKILL.md) skill no-session-history rule is a LOW finding.
 
 ### Types and configuration
 
@@ -126,7 +126,7 @@ Choose the verdict:
 
 - `REQUEST_CHANGES`: a BLOCKER or HIGH finding, failed criterion, or required check failing because of the change.
 - `COMMENT`: neither `REQUEST_CHANGES` nor `BLOCKED` applies, every criterion and completed check passes, and MEDIUM or LOW findings remain open or a required check is safely unavailable.
-- `APPROVE`: no open finding, every criterion and required local check and artifact inspection passes, and required remote checks are green or pending, or fail only under the sibling [ship skill](../ship/SKILL.md), step 9 approval-evidence bootstrap. MEDIUM or LOW findings declined with an accepted reason count as resolved.
+- `APPROVE`: no open finding, every criterion and required local check and artifact inspection passes, and required remote checks are green or pending, or fail only under the sibling [`ship`](../ship/SKILL.md) skill, step 9 approval-evidence bootstrap. MEDIUM or LOW findings declined with an accepted reason count as resolved.
 - `BLOCKED`: missing access, requirements, or evidence, or unrelated infrastructure failure prevents a safe verdict.
 
 If unable to submit a GitHub approval, give a recommendation and state that remote review state did not change.

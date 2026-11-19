@@ -7,7 +7,7 @@ description: Use when asked to design, build, or mock up a webpage, HTML page, l
 
 ## 1. Write the brief
 
-- Subject: what the page is for, who reads it, and its main job. Where the request leaves something open, choose a concrete answer consistent with `DESIGN.md` and note it as an assumption.
+- Subject: what the page is for, who reads it, and its main job. Where the request leaves something open, choose a concrete answer consistent with [`DESIGN.md`](DESIGN.md) and note it as an assumption.
 - Content: the real copy, data, and links the user supplied. The subagent writes everything else.
 - Constraints: the stack, required sections, and visual direction the user set. Follow the existing project's stack, design tokens, components, and asset conventions, and reuse them before adding new ones. A standalone page defaults to one self-contained `index.html` with inline CSS and JS and web fonts from a CDN.
 - Phones: adapt the layout and main task for phones by default. Text stays readable, touch targets are at least 44px, controls stay usable in a short viewport with the keyboard open, main actions stay reachable within safe areas, and narrow screens cause no horizontal scrolling.
