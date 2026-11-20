@@ -9,17 +9,20 @@ Change only the issue tracker, and only when asked. Never edit code or write tra
 
 ## Scope
 
-- no argument: every first-party source and test directory, report only
+- no argument: every first-party source and test path the ledger does not cover, report only
+- `full`: every first-party source and test directory, ignoring the ledger
 - a path or package: that scope
 - a request to file issues: audit and file verified finding classes
 
 Audit first-party code only, in every scope.
 
-Done when every verified class is reported or filed and every review escape is named. Report severity counts, issue numbers, dismissed candidates with reasons, and read and unread scope.
+Done when every verified class is reported or filed, every review escape is named, and the ledger entry is written. Report severity counts, issue numbers, dismissed candidates with reasons, read and unread scope, and verified findings per thousand lines read.
 
 ## Prepare
 
 Read linter, formatter, and type-checker configuration and ignores, dependencies, recent history, uncommitted changes, and existing tracker issues. Without tracker access, report unchecked deduplication and do not file.
+
+Read the ledger: the open tracker issue titled `audit: ledger`. Each comment is one audit's entry, giving its commit SHA, the paths read in full, lines read, verified finding count, and filed issue numbers. A path is covered when an entry read it in full and `git diff --quiet <entry SHA> HEAD -- <path>` succeeds. Audit only uncovered paths unless the scope is `full` or names a path.
 
 ## Look for
 
@@ -44,7 +47,7 @@ Severity follows `review`, section 5.
 
 ## File issues
 
-File one issue per class, split into vertical slices when large. Apply severity labels when available. Criteria must name a lint, test, or type that prevents recurrence.
+File one issue per class, split into vertical slices when large. Apply severity labels when available. Under Problem, give the class search: a command (`grep`, `ast-grep`, or a script) that lists every instance, with its hit count at the verified commit. Criteria must name a lint, test, or type that prevents recurrence and fails on every hit of the class search.
 
 Check validation, failure modes, idempotency and retry, authorization, concurrency and ordering, data lifecycle, external-dependency failure, state transitions, and observability. Classify each as a criterion, existing behaviour, not applicable, or an open question under Problem.
 
@@ -53,6 +56,7 @@ Use this format:
 ```text
 ## Problem
 <what is wrong, with path:line citations and the concrete consequence>
+<class search command and its hit count>
 
 ## Acceptance criteria
 - <observable outcome the fix must achieve>
@@ -63,3 +67,19 @@ Use this format:
 ```
 
 Use a Conventional Commits subject without the type for the title.
+
+## Record the ledger entry
+
+When filing, add a comment to the ledger issue, creating the issue first if it is missing:
+
+```text
+SHA: <full commit SHA>
+Scope: <argument, or "uncovered paths">
+Lines read: <count of lines in fully read text files>
+Verified findings: <count> (<count per thousand lines read>)
+Issues: <numbers filed or extended>
+Paths read in full:
+<one path per line>
+```
+
+In a report-only audit, put the same entry in the report instead.
