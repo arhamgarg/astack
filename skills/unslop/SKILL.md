@@ -1,6 +1,6 @@
 ---
 name: unslop
-description: Use whenever writing prose for a person: a reply, commit message, PR or issue text, doc, readme, email, or message.
+description: Use whenever writing prose for a person, such as a reply, commit message, PR or issue text, doc, readme, email, or message.
 ---
 
 # Unslop
