@@ -25,7 +25,7 @@ For a new identity, work as the design lead at a studio known for giving every c
    - Type: the typefaces and their roles.
    - Layout: a one-sentence concept plus ASCII wireframes for at least two alternatives, compared, with the text alignment rule stated.
    - Principles: what makes this page belong to this subject, and the defining layout decision. Name the character in two or three concrete words (never clean, modern, sleek, minimal, or premium), the one or two moments where color, material, and detail concentrate while the chrome stays quiet, and one signature detail used consistently.
-3. **Review the plan against the brief.** For each part, imagine a similar brief and ask whether you would make the same choice. If you would, it is a habit, not a choice. Revise it and write down what changed and why. For a new identity, check every part against § Tells.
+3. **Review the plan against the brief.** For a new identity, imagine a similar brief for each part and ask whether you would make the same choice. If you would, it is a habit, not a choice. Revise it, write down what changed and why, and check every part against § Tells. For an app UI, check each part against § Apps, dashboards, and data-dense UI and keep the conventions it names.
 4. **Build** from the revised plan. Write the copy before setting type and layout, because headline length decides size and position.
 5. **Critique.** Screenshot at 1440px and 390px wide, or the host's frame widths, in each color scheme you support, if your environment can render pages. Fix what you see, and remove one accessory if § Restraint allows one.
 

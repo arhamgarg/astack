@@ -27,16 +27,16 @@ The hard rules in `DESIGN.md` hold at levels 2 to 4. Its preferences apply only 
 
 ## 3. Build it
 
-To judge an existing UI without changing it, skip to step 4. Build a change to existing UI, a single component, or an inline chart yourself, after reading `DESIGN.md` in full and following its process. For a new page or a multi-screen build, start one builder on the newest Claude Fable or Opus model (the `fable` or `opus` alias where the harness accepts one) at high reasoning effort. Include the absolute path of `DESIGN.md` and send the brief with this:
+To judge an existing UI without changing it, run step 4 on the whole UI and report each failure with its evidence instead of fixing it. Build a change to existing UI, a single component, or an inline chart yourself, after reading `DESIGN.md` in full and following its process. For a new page or a multi-screen build, start one builder on the newest Claude Fable or Opus model (the `fable` or `opus` alias where the harness accepts one) at high reasoning effort. Include the absolute path of `DESIGN.md` and send the brief with this:
 
-> Read the design reference at the path in this brief in full and follow its process, building at the output path. Report in at most five lines: the output path, the defining layout decision, the palette values and typefaces, what the plan review changed, and anything unfinished.
+> Read the design reference at the path in this brief in full and follow its process, building at the output path yourself without starting other agents. Report in at most five lines: the output path, the defining layout decision, the palette values and typefaces, what the plan review changed, and anything unfinished.
 
 ## 4. Check the result
 
 Run the rendering checks in a browser or preview tool when the host allows one, and record any check you cannot run as not performed.
 
 - The page exists at the requested path or route and opens without console errors.
-- The parts the change touches meet `DESIGN.md` § Hard rules in every color scheme the host or project supports.
+- The parts the change touches, or the whole UI when judging, meet `DESIGN.md` § Hard rules in every color scheme the host or project supports.
 - It reads at 1920, 1440, 390, and 320px wide, or at the host's frame widths, with no horizontal scroll and no wrapped button label, and meets the brief's Phones constraints.
 - It meets `DESIGN.md` § Motion and interaction, and the CSS has no `infinite` iteration count.
 - For a new identity, none of the tells in `DESIGN.md` § Tells appear, unless the brief asked for them.

@@ -45,7 +45,7 @@ cp astack/AGENTS.md ~/.codex/AGENTS.md
 
 These are starting points. Edit them. Put personal settings in your project's `AGENTS.md`, which overrides the global one, so you can update the skills without losing them.
 
-Run `python3 check.py` before committing. [`check.py`](check.py) flags dashes, broken relative links, and `SKILL.md` frontmatter whose name differs from its directory.
+Run `python3 check.py` before committing. [`check.py`](check.py) flags dashes, broken relative links, `SKILL.md` frontmatter whose name differs from its directory, and descriptions containing `: `, which strict YAML rejects.
 
 ## License
 
