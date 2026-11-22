@@ -10,7 +10,7 @@ The agent instructions and skills I use every day. They work in both Claude Code
 | [`review`](skills/review/SKILL.md) | "review this PR" | Reviews a PR, branch, commit, or diff for bugs and merge safety, ranked by risk. |
 | [`audit`](skills/audit/SKILL.md) | "audit this" | Finds tech debt and architecture problems with `path:line` evidence, and files issues when asked. |
 | [`verify`](skills/verify/SKILL.md) | "prove this invariant" | Checks a property with contracts, property tests, model checking, or a Lean proof. |
-| [`design`](skills/design/SKILL.md) | "design a page" | Writes a brief, hands it to a design subagent, and checks the page at four widths, in dark mode, and with reduced motion. |
+| [`design`](skills/design/SKILL.md) | "design a page" | Writes a brief, hands it to a design subagent, and checks the page at four widths, in each color scheme it supports, and with reduced motion. |
 | [`engineering`](skills/engineering/SKILL.md) | (automatic) | Working rules for code: the simplest fix, no comments, behaviour tests, and the checks each change needs. |
 | [`unslop`](skills/unslop/SKILL.md) | (automatic) | Rules for plain prose: no AI vocabulary, no dashes, and one idea per sentence. |
 | [`instructions`](skills/instructions/SKILL.md) | (automatic) | Rules for writing and pruning `AGENTS.md` and `SKILL.md` files. |
