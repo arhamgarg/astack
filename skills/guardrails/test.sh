@@ -46,6 +46,7 @@ printf '#!/usr/bin/env bash\n# says hi\necho hi\n' > scripts/hi.sh
 printf '//go:build linux\npackage x\n// note\n' > src/app/x.go
 printf '# syntax=docker/dockerfile:1\n# escape=`\n# check=skip=all\nFROM scratch\n# note\n# syntax=late\n' > Dockerfile
 printf '# syntax=x\nkey: 1\n' > settings.yml
+mkdir -p build; for f in Containerfile build/app.dockerfile Dockerfile.dev; do printf '# syntax=x\nFROM scratch\n# note\n' > "$f"; done
 printf '// swift-tools-version:5.9\nlet x = 1\n' > Package.swift
 mkdir -p web; printf '/// <reference types="node" />\nexport {}\n' > web/env.ts
 printf 'a { color: red; } /* note */\n' > web/site.css
@@ -54,9 +55,12 @@ expect comments 1 'src/app/x.go:3: comment'
 expect comments 1 'Dockerfile:5: comment'
 expect comments 1 'Dockerfile:6: comment'
 expect comments 1 'settings.yml:1: comment'
+expect comments 1 'Containerfile:3: comment'
+expect comments 1 'build/app.dockerfile:3: comment'
+expect comments 1 'Dockerfile.dev:3: comment'
 expect comments 1 'web/site.css:1: comment'
-lacks comments 'ok.py|x.go:1|hi.sh:1|Dockerfile:[1-4]:|env.ts|Package.swift'
-git checkout -q -- src/app/__init__.py; rm -r src/app/ok.py scripts/hi.sh src/app/x.go Dockerfile settings.yml Package.swift web
+lacks comments 'ok.py|x.go:1|hi.sh:1|Dockerfile:[1-4]:|env.ts|Package.swift|Containerfile:1|dockerfile:1|Dockerfile.dev:1'
+git checkout -q -- src/app/__init__.py; rm -r src/app/ok.py scripts/hi.sh src/app/x.go Dockerfile settings.yml Package.swift web build Containerfile Dockerfile.dev
 printf 'int x = 1; /* caf\xe9 */\n' > src/app/legacy.c
 expect comments 0 ''
 expect file_size 0 ''
@@ -98,9 +102,10 @@ expect naming 1 'src/app/0002_extra.py: name Python modules in snake_case'
 rm -r src/BadDir docs/My_Notes.md src/app/BadPkg src/app/0002_extra.py
 mkdir -p formal/Proofs web/app/[slug] .github/ISSUE_TEMPLATE skills/demo docs/_static src/app/migrations
 printf 'theorem t : True := trivial\n' > formal/Proofs/Basic.lean
-mkdir -p 'web/app/(shop)/@modal/[...slug]' web/pages web/routes
+mkdir -p 'web/app/(shop)/@modal/[...slug]' 'web/app/(.)photo' web/pages web/routes
+printf 'export {}\n' > 'web/app/(.)photo/page.tsx'
 printf 'export {}\n' > web/Button.tsx; printf 'export {}\n' > web/app/[slug]/page.tsx; printf 'export {}\n' > 'web/app/(shop)/@modal/[...slug]/page.tsx'
-for f in _app.tsx '[id].tsx'; do printf 'export {}\n' > "web/pages/$f"; done; for f in +page.ts '$id.tsx'; do printf 'export {}\n' > "web/routes/$f"; done
+for f in _app.tsx '[id].tsx' '[...slug].tsx' '[[...slug]].tsx'; do printf 'export {}\n' > "web/pages/$f"; done; for f in +page.ts '$id.tsx' '$postId.tsx' '$.tsx' __root.tsx; do printf 'export {}\n' > "web/routes/$f"; done
 printf 'name: bug\n' > .github/ISSUE_TEMPLATE/bug.yml; printf 'x\n' > .github/pull_request_template.md
 printf '# Demo\n' > skills/demo/SKILL.md; printf '# Conduct\n' > CODE_OF_CONDUCT.md
 printf 'a {}\n' > docs/_static/site.css; printf 'x = 1\n' > src/app/migrations/0001_initial.py
@@ -129,6 +134,9 @@ expect file_size 0 ''
 git checkout -q -- src/app/legacy.py
 sed -i.bak '1d' src/app/feeds.py; rm src/app/feeds.py.bak
 expect file_size 0 ''
+git checkout -q -- src/app/feeds.py
+printf 'y = 3\n' >> src/app/feeds.py
+expect file_size 1 'src/app/feeds.py: 603 lines \(was 602\); files over 500 lines may not grow'
 git checkout -q -- src/app/feeds.py
 
 printf 'from __future__ import annotations\n\nimport os  # noqa: F401\n' > src/app/sup.py
@@ -189,10 +197,16 @@ expect markdown 0 ''
 git checkout -q work
 
 git init -q --bare -b main "$W/sub.git"; git clone -q "$W/sub.git" "$W/sub" 2>/dev/null
-(cd "$W/sub" && git config user.name kit && git config user.email kit@example.invalid && git commit -q --allow-empty -m one && git commit -q --allow-empty -m two && git push -q origin main 2>/dev/null)
+(cd "$W/sub" && git config user.name kit && git config user.email kit@example.invalid && git config commit.gpgsign false && git commit -q --allow-empty -m one && git commit -q --allow-empty -m two && git push -q origin main 2>/dev/null)
 git checkout -qb vendor
 git -c protocol.file.allow=always submodule -q add "$W/sub.git" vendor/sub 2>/dev/null; git -C vendor/sub checkout -q HEAD~1; git add -A; git commit -qm 'chore: vendor'
 git -C vendor/sub checkout -q main; git add vendor/sub
+moved() { if [ "$(git diff --cached --raw vendor -- vendor/sub | cut -c1-15)" = "$1" ]; then pass=$((pass+1)); else fail=$((fail+1)); echo "FAIL submodule fixture: $(git diff --cached --raw vendor)"; fi; }
+moved ':160000 160000 '
+expect suppressions 0 '' --base vendor
+expect file_size 0 '' --base vendor
+git rm -q -f vendor/sub
+moved ':160000 000000 '
 expect suppressions 0 '' --base vendor
 expect file_size 0 '' --base vendor
 git checkout -q -f work 2>/dev/null; rm -rf vendor

@@ -16,9 +16,7 @@ PRAGMA = re.compile(
     r"|ty: ?ignore\[[\w, -]+\]"
     r"|fmt: (on|off|skip))"
 )
-HASH_FILES = re.compile(
-    r"(^|/)(Makefile|Dockerfile|Containerfile|\.gitignore)$|\.(sh|bash|zsh|toml|ya?ml|dockerfile)$"
-)
+HASH_FILES = re.compile(r"(^|/)(Makefile|\.gitignore)$|\.(sh|bash|zsh|toml|ya?ml)$")
 SLASH_FILES = re.compile(r"\.(js|mjs|cjs|jsx|ts|tsx|go|rs|swift|kt|java|c|h|cc|cpp|hpp)$")
 DIRECTIVE = re.compile(r"//go:\w|/// <reference |// swift-tools-version:")
 HEADER_DIRECTIVE = re.compile(r"#\s*(syntax|escape|check)=")
@@ -69,10 +67,10 @@ def _css(path: str, src: str) -> list[str]:
 
 
 def _lines(path: str, src: str) -> list[str]:
-    markers = ("#",) if HASH_FILES.search(path) else ("//", "/*")
+    docker = bool(DOCKERFILE.search(path))
+    markers = ("#",) if HASH_FILES.search(path) or docker else ("//", "/*")
     failures = []
     header = True
-    docker = bool(DOCKERFILE.search(path))
     for number, line in enumerate(src.splitlines(), 1):
         stripped = line.lstrip()
         header = header and docker and bool(HEADER_DIRECTIVE.match(stripped))
@@ -93,7 +91,7 @@ def check(repo: Path) -> list[str]:
             failures += _python(path, src)
         elif path.endswith(".css"):
             failures += _css(path, src)
-        elif HASH_FILES.search(path) or SLASH_FILES.search(path):
+        elif HASH_FILES.search(path) or DOCKERFILE.search(path) or SLASH_FILES.search(path):
             failures += _lines(path, src)
     return failures
 

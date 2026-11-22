@@ -9,12 +9,16 @@ KEBAB = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
 PYTHON = re.compile(r"[a-z_][a-z0-9_]*")
 PASCAL = re.compile(r"[A-Z][A-Za-z0-9]*")
 FOLDER = re.compile(r"[._]?[a-z0-9]+(?:[-_][a-z0-9]+)*|__[a-z0-9]+__")
-ROUTE_SEGMENT = re.compile(r"\[{1,2}(?:\.\.\.)?[A-Za-z0-9_]+\]{1,2}|\([a-z0-9-]+\)|@[a-z0-9-]+")
+ROUTE_SEGMENT = re.compile(
+    r"\[{1,2}(?:\.\.\.)?[A-Za-z0-9_]+\]{1,2}|\([a-z0-9-]+\)|@[a-z0-9-]+|(?:\(\.{1,3}\))+[a-z0-9-]+"
+)
 UPPERCASE_DOCUMENT = re.compile(r"[A-Z][A-Z0-9_]*")
 MIGRATION = re.compile(r"[0-9]{4}_[a-z0-9_]+")
 SCRIPT_CODE = (".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".css")
 COMPONENTS = (".tsx", ".jsx")
-ROUTE_FILE = re.compile(r"\[{1,2}(?:\.\.\.)?[A-Za-z0-9_]+\]{1,2}\.[a-z.]+|[_+$][a-z0-9-]+\.[a-z.]+")
+ROUTE_FILE = re.compile(
+    r"\[{1,2}(?:\.\.\.)?[A-Za-z0-9_]+\]{1,2}\.[a-z.]+|(?:__|[_+$])[A-Za-z0-9-]*\.[a-z.]+"
+)
 
 
 def words(stem: str) -> list[str]:
