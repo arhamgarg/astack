@@ -1,6 +1,6 @@
 ---
 name: unslop
-description: Use whenever writing prose for a person: a reply, commit message, PR or issue text, doc, readme, email, or message.
+description: Use whenever writing prose for a person, such as a reply, commit message, PR or issue text, doc, readme, email, or message.
 ---
 
 # Unslop
@@ -36,29 +36,29 @@ Write so a tired reader understands on the first read. Check each sentence again
 22. **Forced patterns.** Use the natural number of items instead of three, list topics instead of "from X to Y", and state the point instead of "not just X but Y".
 23. **Vague sources and generic endings.** "Experts believe" and "the future looks bright" say nothing. Name the source or state the fact. Cut a closing sentence that adds no fact.
 24. **Monotony.** Vary sentence length on purpose, and don't start consecutive sentences with the same words.
+25. **Define a term the reader may not know** once, in passing, where it first matters.
 
 ## Punctuation and formatting
 
-25. **No dashes as punctuation.** No em dashes or en dashes anywhere you write, and no hyphens used as dashes. End the sentence or use a comma. Use periods, not semicolons. Remove every em or en dash in a file you edit.
-26. **Colons** go only before a list or an example, or after a bold lead-in.
-27. **Parentheses** hold a complete phrase or become a sentence.
-28. **Bold sparingly.** Don't bold every proper noun, and never pair a bold label and colon with a line that repeats it ("**Performance:** Performance improved"). Bold a lead-in only when the text after its colon adds what the lead-in doesn't say.
-29. **Headings** are in sentence case and carry the point ("Pick the mode first", not "Modes"). A task heading is a verb phrase and a concept heading a noun phrase. Use one h1 and don't skip levels.
-30. **Lists** are numbered for sequences and bulleted otherwise, introduced by a full sentence, with parallel items. No "etc.". Say up front when a list is partial.
-31. **Bold for UI elements.** Link text names the destination, never "click here". Prefer a sentence of context over a link away.
+26. **No dashes as punctuation.** No em dashes or en dashes anywhere you write, and no hyphens used as dashes. End the sentence or use a comma. Use periods, not semicolons. Remove every em or en dash in a file you edit.
+27. **Colons** go only before a list or an example, or after a bold lead-in.
+28. **Parentheses** hold a complete phrase or become a sentence.
+29. **Bold sparingly.** Don't bold every proper noun, and never pair a bold label and colon with a line that repeats it ("**Performance:** Performance improved"). Bold a lead-in only when the text after its colon adds what the lead-in doesn't say.
+30. **Headings** are in sentence case and carry the point ("Pick the mode first", not "Modes"). A task heading is a verb phrase and a concept heading a noun phrase. Use one h1 and don't skip levels.
+31. **Lists** are numbered for sequences and bulleted otherwise, introduced by a full sentence, with parallel items. No "etc.". Say up front when a list is partial.
+32. **Bold for UI elements.** Link text names the destination, never "click here". Prefer a sentence of context over a link away.
 
 ## Tone
 
-32. **Chatbot phrases.** Delete "I hope this helps!", "Let me know if...", "Certainly!", and "Found the smoking gun!".
-33. **Announcements.** Delete "we will soon support". Use "will" only for what actually happens later.
+33. **Chatbot phrases.** Delete "I hope this helps!", "Let me know if...", "Certainly!", and "Found the smoking gun!".
+34. **Announcements.** Delete "we will soon support". Use "will" only for what actually happens later.
 
 ## Documents
 
-34. **One document, one purpose.** A tutorial teaches by doing, a how-to solves one task for someone competent, a reference describes completely and without opinion, and an explanation answers one real "why" with the decisions and trade-offs. Don't mix them. Split and link.
-35. **Leave unchanged sentences alone** between edits.
+35. **One document, one purpose.** A tutorial teaches by doing, a how-to solves one task for someone competent, a reference describes completely and without opinion, and an explanation answers one real "why" with the decisions and trade-offs. Don't mix them. Split and link.
+36. **Leave unchanged sentences alone** between edits.
 
 ## Re-explaining
 
-36. **When the reader did not follow** ("what do you mean", "explain"), explain it as you would to a smart colleague who missed the conversation. Open with the point and what it means for them: what happened, where things stand, and what they need to decide or do. Explain the source rather than rewriting it, and make the explanation shorter.
-37. **Keep everything that changes what the reader would do:** exact names, commands, and values, and every failure, caveat, and open question. Sound no more certain or positive than the source. If rereading shows the earlier message was wrong, say so and correct it.
-38. **Define a term the reader may not know** once, in passing, where it first matters.
+37. **When the reader did not follow** ("what do you mean", "explain"), explain it as you would to a smart colleague who missed the conversation. Open with the point and what it means for them: what happened, where things stand, and what they need to decide or do. Explain the source rather than rewriting it, and make the explanation shorter.
+38. **Keep everything that changes what the reader would do:** exact names, commands, and values, and every failure, caveat, and open question. Sound no more certain or positive than the source. If rereading shows the earlier message was wrong, say so and correct it.

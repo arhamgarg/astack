@@ -20,11 +20,11 @@ Done when section 6 is complete or nothing to review is reported.
 
 ## Reviewer model
 
-The reviewer model is the newest Claude Fable model when you are an Anthropic model, and the newest GPT Astra model when you are an OpenAI model. Use the harness's floating alias where it has one, otherwise the highest version it lists, and record the exact model ID in review evidence.
+The reviewer model is the newest Claude Fable model when you are an Anthropic model, and the newest GPT Astra model when you are an OpenAI model. Use the harness's floating alias where it has one, otherwise the highest version it lists, and record the exact model ID in review evidence. When that model is out of quota, stop the work that needs the review and report its reset time. Keep the repository's review policy unchanged unless the user asks.
 
 ## 1. Stance
 
-Check the contract and evidence first. Focus adversarial probes on unproved behaviour, assumptions, and model-to-code agreement. Critical changes retain one independent review. Additional rounds need a changed finding, changed code, or new evidence, and focus on the affected risk. Required head approvals still apply. Unless asked for fixes, review read-only without editing, switching branches, or changing external state. Run probes, mutations, and scripts on a copy in a new temporary directory, never in a checkout. Stay in the foreground until section 6 is written.
+Check the contract and evidence first. Focus adversarial probes on unproved behaviour, assumptions, and model-to-code agreement. Critical changes retain one independent review. Additional rounds need a changed finding, changed code, or new evidence, and focus on the affected risk. Required head approvals still apply. Unless asked for fixes, review read-only without editing, switching branches, or changing external state. Run probes, mutations, and scripts on a copy in a new temporary directory, never in a checkout. Finish section 6 before ending your turn.
 
 ## 2. Inputs
 
@@ -41,7 +41,7 @@ Read the base, head, full merge-base diff, linked issue and acceptance criteria,
    Tests and documentation carry the risk of the behaviour they specify, regardless of diff size.
 3. **Behaviour.** For each change, read the whole function or type, callers, downstream consumers, configuration and factory wiring, serialization, persisted-state boundaries, and contract tests. Trace error, retry, restart, missing-data, and partial-success paths. Require a concrete, reachable failure path for concerns. Inspect pinned library source, wire and database formats, flags, and indirect consumers. Investigate unexplained differences across sibling implementations. Name the fact safety depends on and establish it with evidence. Distinguish inspection, executed tests, exhaustive bounded checks, and machine-checked proofs. For formal evidence, apply the evidence requirements in `verify`. Inspect the specification, assumptions, and code mapping instead of re-deriving the proved result.
 4. **Checklists.** Apply section 4 and relevant project checklists.
-5. **Verification.** Confirm every hunk was read. Any unread hunk makes the verdict `BLOCKED`.
+5. **Coverage.** Confirm every hunk was read. On a round after a rebase of an approved head, the hunks to read are those `git range-diff <old-base>..<approved head> <new-base>..<current head>` shows as changed, plus its evidence that nothing else changed. Any unread hunk makes the verdict `BLOCKED`.
 6. **Other reviews.** Reproduce or trace bot and human claims. Dismiss incorrect claims with evidence and avoid duplicate findings.
 7. **Report.** Use sections 5 and 6.
 

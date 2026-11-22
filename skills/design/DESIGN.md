@@ -1,66 +1,93 @@
 # Design reference
 
-The builder subagent of the [`design`](SKILL.md) skill reads this. The brief's own words override every rule here, including a request for a look this file calls a tell.
+The [`design`](SKILL.md) skill and its builder read this. § Hard rules apply unless the user's own words override one. Every other section is a preference. The brief, the host's rendering contract, and the project's design system override a preference, in that order, including a request for a look this file calls a tell.
 
-Work as the design lead at a studio known for giving every client an identity no one confuses with anyone else's. Make deliberate choices specific to this brief, and take aesthetic risk where the subject justifies it.
+For a new identity, work as the design lead at a studio known for giving every client an identity no one confuses with anyone else's, and take aesthetic risk where the subject justifies it. For an app UI, work as the maintainer of its design system, or of the small one you set up when none exists: match it, extend it with named tokens, and spend novelty only where it makes the data easier to read. An app UI uses § Apps, dashboards, and data-dense UI and skips § Tells. A new identity uses § Landing pages and sites when it is a marketing page, and § Tells.
+
+## Hard rules
+
+- Body text, and text on any fill, reaches at least 4.5:1 contrast. Large text, icons, chart marks, borders that identify a control, and focus rings reach at least 3:1 against what is next to them.
+- No text meant to be read is under 13px. Lines of prose stay under 80 characters.
+- Every link and control works by keyboard, in a logical order, with a visible focus state.
+- Motion stops under `prefers-reduced-motion: reduce`. No animation runs continuously, and transitions stay under 250 ms.
+- Late content reserves its size, so nothing shifts when it arrives.
+- Every data region has hover and focus, loading, empty, error, and long-text states, plus stale and unknown states for live data.
+- Color is never the only signal: pair state colors with a word, a shape, or a position.
+- Numbers in tables are right-aligned in tabular figures, and the page uses one format for each kind of figure.
+- Present only real figures, quotes, and outcomes as real. Mark sample data in a mockup as sample. Show no success message without a real request behind it.
+- A public page shows its content with JavaScript off. A page that owns its background sets it on `<html>` in the first stylesheet, so it never flashes.
 
 ## Process
 
 1. **Ground it in the subject.** Distinctive choices come from the subject's industry, materials, and vernacular. Use the brief's real content throughout.
-2. **Plan.** Write a compact token system:
-   - Color: 4 to 6 named color values, in dark mode.
+2. **Plan.** Inside an existing system, list the tokens and components you reuse and any you add, then skip to step 4. Otherwise write a compact token system:
+   - Color: 4 to 6 identity colors, plus the semantic set the content needs (such as ok, warning, error, stale, and chart series), for each color scheme you support.
    - Type: the typefaces and their roles.
    - Layout: a one-sentence concept plus ASCII wireframes for at least two alternatives, compared, with the text alignment rule stated.
    - Principles: what makes this page belong to this subject, and the defining layout decision. Name the character in two or three concrete words (never clean, modern, sleek, minimal, or premium), the one or two moments where color, material, and detail concentrate while the chrome stays quiet, and one signature detail used consistently.
-3. **Review the plan against the brief.** For each part, imagine a similar brief and ask whether you would make the same choice. If you would, it is a default, not a choice. Revise it and write down what changed and why. Check every part against § Tells.
+3. **Review the plan against the brief.** For a new identity, imagine a similar brief for each part and ask whether you would make the same choice. If you would, it is a habit, not a choice. Revise it, write down what changed and why, and check every part against § Tells. For an app UI, check each part against § Apps, dashboards, and data-dense UI and keep the conventions it names.
 4. **Build** from the revised plan. Write the copy before setting type and layout, because headline length decides size and position.
-5. **Critique.** Screenshot at 1440px and 390px wide if your environment can render pages, fix what you see, and remove one accessory if § Restraint allows one.
+5. **Critique.** Screenshot at 1440px and 390px wide, or the host's frame widths, in each color scheme you support, if your environment can render pages. Fix what you see, and remove one accessory if § Restraint allows one.
 
-## Dark mode
+## Color and theme
 
-- Use a dark background and white `#fff` primary text. The subject's palette lives in accents and small marks.
+- Inside a host frame, use the host's theme variables and leave the page background to the host. Otherwise support the color schemes the brief or project sets. A standalone page with no stated scheme defaults to dark plus a light variant under `prefers-color-scheme`.
+- In dark mode, primary text is white or near white. The subject's palette lives in accents and small marks.
 - Build depth with lightness steps between surfaces, not shadows.
 - Keep large color areas low in saturation and strong chroma for small, meaningful marks.
 - Use `oklch()` and `color-mix()` for the palette so lightness steps are perceptually even.
-- Set `color-scheme: dark` on `:root` and give `<html>` its background color in the first stylesheet, so the page never flashes white.
-- Body text, and text on an accent fill, reaches at least 4.5:1 contrast.
+- Set `color-scheme` on `:root` to match the schemes you support.
 - Keep three text roles (primary, secondary, muted) and an accent that covers a few percent of the screen: the primary action, the selection, one key figure. Semantic colors such as green and red carry only meaning. Borders are hairlines of the text color at 6 to 10% opacity.
 - Style `::selection`, `caret-color`, `scrollbar-color`, and `accent-color` from the palette.
+- Name tokens by role (`--text-2`, `--stop`), not by hue, and test their contrast in code when the project has a test suite.
 
 ## Typography
 
-Choose typefaces for this brief. Inter, Roboto, Arial, Open Sans, and system stacks are defaults. Use one family, or two that are clearly distinct.
+For a new identity, choose typefaces for this brief, and treat Inter, Roboto, Arial, Open Sans, and system stacks as habits to beat. For an app UI, a neutral sans with tabular figures, including those faces, is a sound choice. Use one family, or two that are clearly distinct.
 
-- Set a modular type scale with fluid sizes via `clamp()` and intentional weights, widths, and spacing.
+- Set a modular type scale. Use fluid sizes via `clamp()` for display text, and fixed sizes for tables and controls.
 - When type is the headline or visual element, make the treatment itself part of the design.
-- Keep lines under 80 characters.
-- Right-align numbers in tables and set them in tabular figures (`font-variant-numeric: tabular-nums`).
-- Keep every piece of text meant to be read at 13px or larger.
-- Build hierarchy from size and color, with weights from 400 to 600 and none from 700 to 900 on headings. Set letter spacing to 0 under 16px and negative only at display sizes. Use one format for figures across the page.
+- Build hierarchy from size and color first, with weights from 400 to 600 by default. Set letter spacing to 0 under 16px and negative only at display sizes.
 
 ## Layout and structure
 
-- Open the hero with the most characteristic thing in the subject's world, in whatever form fits it.
 - Structure carries information. Borders, numbering, dividers, and labels must encode something about the content. Number items only when the content is a sequence.
 - Vary spacing to create rhythm: tight groups, generous separations. Use fluid spacing with `clamp()`. Put spacing on a 4px grid, give equal siblings equal size and padding, and replace one-off values with grid steps.
 - Prefer left-aligned text and asymmetric compositions, and break the grid on purpose for emphasis.
 - Scale border radius with hierarchy instead of one radius on everything. Outer radius equals inner radius plus the padding between them.
-- Navigation is the logo, the existing links, and one button, with log in as a text link and the links collapsing to one menu button on phones. Fill the first screen's height with no dead empty band, and on phones simplify a dense preview (fewer rows and columns) instead of scaling it down.
-- An app page keeps app proportions: a shell that fills the viewport, a 240 to 280px sidebar, and fluid content, never a narrow centered column.
 - Where the content is a process, structure, comparison, or quantity, show it as a diagram, chart, or interactive model. When showing explains it better than telling, make the visual the main carrier and let prose support it. Each visual explains something the reader needs.
-- Give charts a hierarchy: one main chart clearly largest, one accent on the series that matters and neutral steps for the rest, the type matched to the data (line for a trend, bars for a comparison, a stacked bar or ranked list for a share), and a muted grid.
 - Use container queries for components.
 - Keep CSS specificity flat. Give the spacing between sections one owner, so section-level and element-level selectors never both set padding or margin.
 
+### Landing pages and sites
+
+- Open the hero with the most characteristic thing in the subject's world, in whatever form fits it.
+- Navigation is the logo, the existing links, and one button, with log in as a text link and the links collapsing to one menu button on phones. Fill the first screen's height with no dead empty band, and on phones simplify a dense preview (fewer rows and columns) instead of scaling it down.
+
+### Apps, dashboards, and data-dense UI
+
+- Keep app proportions: a shell that fills the viewport (except inside a host frame), a sidebar of about 200 to 320px, and fluid content, never a narrow centered column.
+- Density beats breathing room. Use compact rows (28 to 36px on desktop) and group with alignment and hairlines.
+- Live data shows its as-of time. An update changes the value in place, without shifting its width, and without more than one brief highlight.
+- Tables: sticky header, sortable columns with `aria-sort`, truncation that keeps the full value reachable, a fixed column order, and on phones the priority columns with the rest of each row behind an expand control.
+- Charts:
+  - Give charts a hierarchy: one main chart clearly largest, one accent on the series that matters and neutral steps for the rest, and a muted grid.
+  - Match the type to the data: a line for a trend, bars for a comparison, a stacked bar or ranked list for a share.
+  - Label the axes with units, show the zero or baseline, and give time axes only the sessions that exist.
+  - Use sign colors only for sign.
+  - Make the tooltip or crosshair reachable by keyboard, and give each chart a text or table alternative.
+  - Draw with SVG up to a few thousand points and with canvas beyond.
+- Keyboard: give frequent actions shortcuts declared with `aria-keyshortcuts`, and add a command palette when there are more than about 7 destinations.
+- Several equal controls may share one style. Keep a single primary style for the action that commits money or state.
+
 ## Motion and interaction
 
-- Run each animation once, in answer to a user action, to show what changed, and let it end. Never pulse, shimmer, spin, or animate a blur, and never run an animation continuously, which repaints every frame and pins the GPU on high-refresh displays.
-- Stop motion under `prefers-reduced-motion: reduce`, show a visible keyboard focus state on every link and control, and render a public page's content without JavaScript.
-- Reserve the final size for everything that arrives later: a flat loading placeholder, and images and embeds with `aspect-ratio` or width and height, so nothing shifts when it arrives.
-- Build every state: hover, focus, loading, empty, error, and long text that wraps or truncates without breaking the layout. Keep hover and focus inside the palette.
+- Run each animation once, in answer to a user action or a data update, to show what changed, and let it end. Never pulse, shimmer, spin, or animate a blur. A determinate progress bar is allowed.
+- Use a flat loading placeholder, and give images and embeds `aspect-ratio` or width and height.
+- Keep hover and focus inside the palette.
 - Animate `transform` and `opacity` only. For height changes, transition `grid-template-rows`.
-- Use one quartic, quintic, or exponential ease-out curve for the page, keep each transition under 250 ms, name the transitioned properties instead of `transition-all`, and use no bounce or overshoot.
-- Give buttons a hierarchy: one primary action per view, with secondary, ghost, and text-link styles for the rest.
+- Name the transitioned properties instead of `transition-all`. By default, use one quartic, quintic, or exponential ease-out curve for the page, with no bounce or overshoot.
+- Give buttons a hierarchy: by default, one primary action per view, with secondary, ghost, and text-link styles for the rest.
 - Use progressive disclosure: basic options first, advanced ones behind an expandable section.
 - Make empty states teach the next action. Prefer inline expansion over modals.
 
@@ -69,17 +96,16 @@ Choose typefaces for this brief. Inter, Roboto, Arial, Open Sans, and system sta
 - Write from the user's side and name things in the user's terms, not implementation terms. Describe what something does instead of selling it.
 - A button says exactly what happens, and an action keeps its name through the flow.
 - Errors say what went wrong and how to fix it, without apology.
-- Use only real figures, quotes, and outcomes. No invented metrics or testimonials, and no success message without a real request behind it.
 - Use sentence case.
 - Use no exclamation marks, greeting headlines, or hype words (supercharge, seamless, unlock, magic). Keep labels short (`Search`, not `Search anything...`) and end them without a period. A change names what it compares to (`+12% vs last month`). Sample data is plausible, never `[X]` or `123,456`, and one set of names and figures repeats across the page.
 
 ## Restraint
 
-Pack information densely and keep copy minimal. Use spacing, alignment and type hierarchy to show structure, with no decorative cards, pills, or chrome, and no cards inside cards. Draw icons from one line set at one size and stroke, in the text color of their role, and use no emoji as icons or label decoration. Give each element one label. No eyebrows (a gray subtitle line above a section heading), subheads, helper text, descriptions, or decoration. Keep only the content, controls, elements, and motion that help the reader complete the page's task.
+Pack information densely and keep copy minimal. Use spacing, alignment and type hierarchy to show structure, with no decorative cards, pills, or chrome, and no cards inside cards. Draw icons from one line set at one size and stroke, in the text color of their role, and use no emoji as icons or label decoration. Give each element one label. No eyebrows (a gray subtitle line above a section heading) or decoration. Add helper text only where it changes what the reader does: an empty state's next step, an error's fix, units, as-of times, provenance, or an action's consequence. Keep only the content, controls, elements, and motion that help the reader complete the page's task.
 
 ## Tells
 
-Each of these is a default that shows up whatever the subject.
+Each of these is a habit that shows up whatever the subject. Check them for a new identity. In an app UI, dense columns, hairline rules, monospace identifiers, and green and red signs for gains and losses are conventions there, not tells.
 
 **Palettes**
 - warm cream background (near `#F4F1EA`) with a high-contrast serif and a terracotta accent (near `#D97757`)
@@ -109,4 +135,4 @@ Each of these is a default that shows up whatever the subject.
 - emoji in labels, badges, and a pill badge above the headline
 - a logo as a gradient or sparkle tile instead of the name as text with a flat mark.
 
-Final check: if you showed this page to someone and said "AI made this", would they believe it at once? If so, find the default that gave it away and replace it.
+Final check: if you showed this page to someone and said "AI made this", would they believe it at once? If so, find the habit that gave it away and replace it.
