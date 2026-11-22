@@ -16,7 +16,7 @@ The arguments set the scope:
 - `#N`, an issue URL, or a title: select that issue
 - a PR number, URL, or reference to the current PR: resume that open loop PR
 
-The request authorizes cleanup, branches, pushes, opening and editing the PR, independent review, merging, issue closure, and deletion of task branches and worktrees. Delete only what the loop created. Never discard, overwrite, reformat, or commit unrelated user changes. Run issues sequentially, with at most one loop PR open. Pause only for the stop conditions below.
+The request authorizes cleanup, branches, pushes, opening and editing the PR, independent review, PR comments, filing issues for valid findings outside the issue, merging, issue closure, and deletion of task branches and worktrees. Delete only what the loop created. Never discard, overwrite, reformat, or commit unrelated user changes. Run issues sequentially, with at most one loop PR open. Pause only for the stop conditions below.
 
 Done when every issue in scope is merged and closed, cleanup is verified, and the report is sent, or a stop condition is reported.
 
@@ -36,7 +36,7 @@ Unless the request names one, rank open issues by, in order:
 4. highest value
 5. lowest number
 
-An issue is eligible when it has no unresolved dependency or conflicting open PR. Take the first eligible issue. Fetch and rerank before each issue.
+An issue is eligible when it has no unresolved dependency or conflicting open PR, is not the audit skill's `audit: ledger` issue, and was not filed by this run for a review finding. The ledger issue stays open. Take the first eligible issue. Fetch and rerank before each issue.
 
 ## 3. Branch and worktree
 
@@ -46,17 +46,23 @@ Use one branch and PR per issue, never stacked.
 
 Before editing, map each acceptance criterion to a test, command, or inspection. For a bug, reproduce it end to end first unless that is impossible locally.
 
+When the issue names a defect class, fix the whole class. Run its class search, or write one as the sibling audit skill's § File issues defines it. Every true instance in the issue's `## Scope` is in scope. When the criteria name a guard, it must fail on each unfixed true instance.
+
+When the project sets a PR size limit and the fix would exceed it, split the issue before editing. File each vertical slice as an issue in the audit format, with `Blocked by #N` naming the slice before it. Close the original issue with a comment listing the slices. The slices replace it in this run's scope, and the first slice continues the loop here.
+
 ## 4. Implement and commit
 
 Search for and reuse existing rules, constants, parsers, and factories before writing them. Commit prerequisite refactors separately first.
 
 An issue requiring an irreversible change needs two PRs, each through the full loop. Merge the reversible work first, then the irreversible work.
 
+Keep a mechanical move free of behaviour changes.
+
 Commit each independently explainable change. Stage by path (`git commit -- <paths>`), never `-a` or `git add -A`. Keep review fixes as separate commits until merge. Use Conventional Commits (`<type>[scope][!]: <description>`) for commit subjects and PR titles. Fix a deliberately failing test commit in the same session. Report skipped hooks.
 
 ## 5. Verify
 
-Run the required gates, then `git diff --check`. Apply the review skill's CRAP, duplication, and mutation checklist item to changed code, recording equivalent survivors with reasons and inherited survivors as counts under `## Verification`. Read the final diff and commit list against the merge base.
+Run the required gates, then `git diff --check`. Rerun the class search. Under `## Verification`, record its command and zero remaining true instances in scope, and name each other hit with the reason it is not one. Apply the review skill's CRAP, duplication, and mutation checklist item to changed code, recording equivalent survivors with reasons and inherited survivors as counts under `## Verification`. Read the final diff and commit list against the merge base.
 
 If `<remote>/<base>` moved, rebase and rerun the gates before pushing. After each rebase, run `git range-diff <old-base>..<old-head> <new-base>..<new-head>`. Confirm every commit survived with only conflict resolution changed.
 
@@ -93,7 +99,7 @@ Keep the PR worktree's files and branch unchanged while the reviewer works.
 
 ## 8. Triage and re-review
 
-Trace each finding before acting. Before implementing a capability identified as missing, search for callers. Decline unused capabilities and findings beyond the issue's goal as unrequested scope, even if valid.
+Trace each finding before acting. Before implementing a capability identified as missing, search for callers. Decline unused capabilities as unrequested scope. File each valid finding beyond the issue's goal as a new issue in the sibling [`audit`](../audit/SKILL.md) skill's format, after checking the tracker for a duplicate, and list its number under `## Risks and limitations`.
 
 - Fix valid BLOCKER or HIGH findings, failed criteria, and failures caused by the change.
 - Fix valid MEDIUM or LOW findings when in scope and improving correctness or necessary maintainability. Otherwise record why not.
@@ -103,7 +109,7 @@ Rerun affected gates, push, and handle checks as in step 7. Start a new round wi
 
 ## 9. Record the review and wait for green
 
-After `APPROVE` and after any pending check passes, confirm the head matches the reviewed head, then replace `## Independent review` with exactly:
+After `APPROVE` and after any pending check passes, confirm the head matches the reviewed head. Post the reviewer's section 6 report from the final round as a PR comment, with `## Independent review report` as its first line followed by the same four lines below, then the report. In the comment, cite evidence by command and result, use repository-relative paths, and leave out machine-local paths and personal identifiers. Then replace `## Independent review` with exactly:
 
 ```text
 ## Independent review
