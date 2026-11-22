@@ -58,7 +58,7 @@ A prohibition puts the forbidden behaviour into context and makes it more likely
 - Write conditions, not cases.
 - Before adding a rule, run the task five or more times in fresh sessions without it. If no run fails, the rule is a no-op.
 - When retuning a document, set the pass bar first, change one thing per round, and run the prompt at least twice before and twice after.
-- After editing a skill, check that every path and command it names exists. After editing its description, run three prompts that should fire it and two that shouldn't in fresh non-interactive sessions (`claude -p` or `codex exec`), and put the results in the commit message.
+- After editing a skill, check that every path and command it names exists. After editing its description, run three prompts that should fire it and two that shouldn't in fresh non-interactive sessions (`claude -p` or `codex exec`).
 
 ## Skill mechanics
 

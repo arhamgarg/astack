@@ -19,8 +19,8 @@ Build complex things as simply as possible. In every problem, look for complexit
 
 ## Standing rules
 
-- No comments. Source files have no comments or docstrings in any language. The only `#` or `//` lines are shebangs and tool pragmas (`noqa`, `type: ignore`, `isort`, `pragma`, `fmt`). Put what a comment would say in a name, a type, a test, or the commit message, and put user-facing help in the framework's help argument. Remove every comment in a file you edit.
-- No session history in the work. Code, names, tests, and docs describe the code as it is, never how it used to be: no "now uses", "previously", "used to be X", "changed from X to Y". Commit messages and PR and issue text may state what the change does and why.
+- No comments. Source files have no comments or docstrings in any language. The only `#` or `//` lines are shebangs and tool pragmas (`noqa`, `type: ignore`, `isort`, `pragma`, `fmt`). Put what a comment would say in a name, a type, a test, or the PR description, and put user-facing help in the framework's help argument. Remove every comment in a file you edit.
+- No session history in the work. Code, names, tests, and docs describe the code as it is, never how it used to be: no "now uses", "previously", "used to be X", "changed from X to Y". PR and issue text may state what the change does and why.
 - For Python, use Astral's tools only: `uv`, `ruff`, and `ty`. Report `ty` gaps rather than switching type checkers.
 - Reach for the standard library and existing dependencies first. Add a maintained library only when it meets the requirements, security included, and reduces the total work once integration and maintenance count. Prefer its extension points to a fork. When API behaviour is unclear, read the official docs for the pinned version, and never upgrade to match a newer example.
 - For performance, first measure where the workload spends its time and change the part that costs most. Look for an algorithmic change (a closed form, an incremental update, a lower complexity class) before tuning code. A performance claim needs before and after numbers with the run count, the spread, the limiting resource, and proof the measured work actually ran.
@@ -33,7 +33,8 @@ These rules add to the [`unslop`](../unslop/SKILL.md) skill for text about code.
 
 - Write the real symbol, file, flag, or command, not a synonym or a description, and put it in code font.
 - Code and strings have no em or en dashes either.
-- A PR description or commit message is a briefing a reviewer reads in under a minute. Link logs, SHA lists, and metric tables the reader can open instead of pasting them. A local or temporary path is not a link: give the command and its result.
+- A commit message is one subject line, with no body or trailers.
+- A PR description is a briefing a reviewer reads in under a minute. Link logs, SHA lists, and metric tables the reader can open instead of pasting them. A local or temporary path is not a link: give the command and its result.
 - A count or tree is true at the commit that adds it and comes with the command that regenerates it.
 
 ## Testing

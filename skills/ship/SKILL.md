@@ -85,7 +85,7 @@ If the environment supports thread links to PRs, link it now.
 
 Standard-risk documentation-only changes skip review unless a repository check requires the step 9 block. Set `## Independent review` to `- Not required: Standard risk, documentation only` and continue at step 9.
 
-Start one read-only reviewer on the review skill's reviewer model when the PR opens. Run required checks concurrently, including a local gate that posts a status. Use fresh context and `high` effort, or `xhigh` for Critical risk, where the host supports it. Give the reviewer:
+Start one read-only reviewer on the review skill's reviewer model when the PR opens. Run required checks concurrently, including a local gate that posts a status. Use fresh context and high effort where supported. Give the reviewer:
 
 - the PR URL, repository path, and base and head revisions
 - the issue and acceptance criteria
