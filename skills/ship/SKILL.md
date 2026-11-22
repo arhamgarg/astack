@@ -40,7 +40,7 @@ An issue is eligible when it has no unresolved dependency or conflicting open PR
 
 ## 3. Branch and worktree
 
-Name the branch `<type>/<subject>`. The type is `fix`, `feat`, `docs`, `test`, `refactor`, or `chore`. The subject is specific lowercase kebab case without an issue number or filler. Use `<parent of main checkout>/.worktrees/<repo>/<type>-<subject>` from `<remote>/<base>`, unless the environment created the task worktree. Confirm that worktree with `git rev-parse --absolute-git-dir` differing from `--git-common-dir`. Run every edit, commit, and gate there.
+Name the branch `<type>/<subject>`. The type is `fix`, `feat`, `docs`, `test`, `refactor`, or `chore`. The subject is specific lowercase kebab case without an issue number or filler. Create the worktree at the path the [`engineering`](../engineering/SKILL.md) skill sets, from `<remote>/<base>`, unless the environment created the task worktree. Confirm that worktree with `git rev-parse --absolute-git-dir` differing from `--git-common-dir`. Run every edit, commit, and gate there.
 
 Use one branch and PR per issue, never stacked.
 
@@ -85,7 +85,7 @@ If the environment supports thread links to PRs, link it now.
 
 Standard-risk documentation-only changes skip review unless a repository check requires the step 9 block. Set `## Independent review` to `- Not required: Standard risk, documentation only` and continue at step 9.
 
-Start one read-only reviewer on the review skill's reviewer model when the PR opens. Run required checks concurrently, including a local gate that posts a status. Use fresh context and high effort where supported. Give the reviewer:
+Start one read-only reviewer on the review skill's reviewer model when the PR opens. Run required checks concurrently, including a local gate that posts a status. Use fresh context and `high` or `xhigh` effort. Give the reviewer:
 
 - the PR URL, repository path, and base and head revisions
 - the issue and acceptance criteria
@@ -102,10 +102,10 @@ Keep the PR worktree's files and branch unchanged while the reviewer works.
 Trace each finding before acting. Before implementing a capability identified as missing, search for callers. Decline unused capabilities as unrequested scope. File each valid finding beyond the issue's goal as a new issue in the sibling [`audit`](../audit/SKILL.md) skill's format, after checking the tracker for a duplicate, and list its number under `## Risks and limitations`.
 
 - Fix valid BLOCKER or HIGH findings, failed criteria, and failures caused by the change.
-- Fix valid MEDIUM or LOW findings when in scope and improving correctness or necessary maintainability. Otherwise record why not.
+- Fix valid MEDIUM or LOW findings when in scope and improving correctness or necessary maintainability. Otherwise record why not. The cost of another review round is not a reason.
 - Dismiss invalid or duplicate findings with code, test, or artifact evidence.
 
-Rerun affected gates, push, and handle checks as in step 7. Start a new round with the original brief, earlier findings and dispositions, open objections, new head, and new results. Use the same reviewer model until it returns `APPROVE` on the current head or a stop condition applies.
+Rerun affected gates, push, and handle checks as in step 7. Start each round as a new reviewer with fresh context, never a message to the previous one, and give it the original brief, earlier findings and dispositions, open objections, new head, and new results. Use the same reviewer model until it returns `APPROVE` on the current head or a stop condition applies.
 
 ## 9. Record the review and wait for green
 
@@ -114,12 +114,12 @@ After `APPROVE` and after any pending check passes, confirm the head matches the
 ```text
 ## Independent review
 - Model: `<reviewer model id>`
-- Reasoning effort: `<effort, or unsupported>`
+- Reasoning effort: `<high or xhigh>`
 - Reviewed head: `<full 40-character SHA>`
 - Verdict: `APPROVE`
 ```
 
-Any later push invalidates this evidence and returns to step 7.
+Any later push invalidates this evidence and returns to step 7. When the push is a rebase whose `git range-diff` shows only base changes, the new reviewer reads only that range-diff and confirms the head.
 
 Approval-evidence bootstrap: if a repository check requires this block on the current head, approval may precede that check passing. Its only failure must be the missing block, and every other required check must pass. The check must pass once the block is recorded.
 
@@ -132,7 +132,7 @@ Wait for every required check, including when `<base>` has no branch protection:
 
 ## 10. Merge
 
-Fetch. If the head lacks `<remote>/<base>`, follow step 9 for a base move. Require current-head approval evidence, or the step 7 not-required line, and all required checks passing. Merge with `gh pr merge <number> <method> --delete-branch`, using a repository-approved method. Confirm the PR is `MERGED` and the issue `CLOSED`. If `Closes #N` failed to close it, close it with a comment naming the PR.
+Fetch. If the head lacks `<remote>/<base>`, follow step 9 for a base move. Require current-head approval evidence, or the step 7 not-required line, and all required checks passing. Merge with `gh pr merge <number> <method> --delete-branch`, using a repository-approved method. When the project gate merges, confirm its merge instead. Confirm the PR is `MERGED` and the issue `CLOSED`. If `Closes #N` failed to close it, close it with a comment naming the PR.
 
 ## 11. Clean up
 
@@ -158,6 +158,7 @@ Stop and report without further changes when:
 - no remote exists or the base is ambiguous
 - the selected issue's prerequisite PR is still open
 - delegation is unavailable when review starts
+- the reviewer model is out of quota: report its reset time
 - cleanup cannot establish whether a branch or worktree holds unrecoverable work
 - no eligible issue remains
 - the issue retains two materially different readings after investigation
