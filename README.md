@@ -19,7 +19,8 @@ The agent instructions and skills I use every day. They work in both Claude Code
 
 Some skills call others. Install the ones they need too:
 
-- `ship` and `audit` use `review`.
+- `ship` uses `review` and `audit`.
+- `audit` uses `review`.
 - `review` uses `verify`.
 - `engineering` uses `review`, `verify`, `ship`, and `unslop`.
 
