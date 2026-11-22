@@ -16,10 +16,13 @@ PRAGMA = re.compile(
     r"|ty: ?ignore\[[\w, -]+\]"
     r"|fmt: (on|off|skip))"
 )
-HASH_FILES = re.compile(r"(^|/)(Makefile|Dockerfile|\.gitignore)$|\.(sh|bash|zsh|toml|ya?ml)$")
+HASH_FILES = re.compile(
+    r"(^|/)(Makefile|Dockerfile|Containerfile|\.gitignore)$|\.(sh|bash|zsh|toml|ya?ml|dockerfile)$"
+)
 SLASH_FILES = re.compile(r"\.(js|mjs|cjs|jsx|ts|tsx|go|rs|swift|kt|java|c|h|cc|cpp|hpp)$")
 DIRECTIVE = re.compile(r"//go:\w|/// <reference |// swift-tools-version:")
 HEADER_DIRECTIVE = re.compile(r"#\s*(syntax|escape|check)=")
+DOCKERFILE = re.compile(r"(^|/)(Dockerfile|Containerfile)[^/]*$|\.dockerfile$")
 BLOCK = re.compile(r"""'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"|/\*.*?\*/""", re.DOTALL)
 FIX = (
     "encode the constraint in a name, a type, a test, or a lint rule, "
@@ -69,9 +72,10 @@ def _lines(path: str, src: str) -> list[str]:
     markers = ("#",) if HASH_FILES.search(path) else ("//", "/*")
     failures = []
     header = True
+    docker = bool(DOCKERFILE.search(path))
     for number, line in enumerate(src.splitlines(), 1):
         stripped = line.lstrip()
-        header = header and bool(HEADER_DIRECTIVE.match(stripped))
+        header = header and docker and bool(HEADER_DIRECTIVE.match(stripped))
         if (number == 1 and stripped.startswith("#!")) or header:
             continue
         if stripped.startswith(markers) and not DIRECTIVE.match(stripped):

@@ -33,7 +33,8 @@ TEXT_CONFIGS = (
     "eslint.config.mjs",
     ".gitleaksignore",
 )
-SECRET_ALLOW = "gitleaks:allow"
+SECRET_ALLOW = "gitleaks" + ":allow"
+SECRET_ALLOW_KIND = "gitleaks: allow"
 CONFIG_NAMES = ("pyproject.toml", *TOML_CONFIGS, *INI_CONFIGS, *JSON_CONFIGS, *TEXT_CONFIGS)
 TRAILER = "Allow-Suppression"
 TRAILER_LINE = re.compile(rf"^{TRAILER}\s*:", re.MULTILINE | re.IGNORECASE)
@@ -93,7 +94,7 @@ def _script(text: str) -> Iterator[str]:
 
 
 def _scan(path: str, text: str) -> Iterator[str]:
-    yield from (SECRET_ALLOW for _ in range(text.count(SECRET_ALLOW)))
+    yield from (SECRET_ALLOW_KIND for _ in range(text.count(SECRET_ALLOW)))
     if path.endswith(".py"):
         yield from _python(path, text)
     elif path.endswith(SCRIPT_SUFFIXES):

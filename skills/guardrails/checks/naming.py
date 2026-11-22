@@ -14,6 +14,7 @@ UPPERCASE_DOCUMENT = re.compile(r"[A-Z][A-Z0-9_]*")
 MIGRATION = re.compile(r"[0-9]{4}_[a-z0-9_]+")
 SCRIPT_CODE = (".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".css")
 COMPONENTS = (".tsx", ".jsx")
+ROUTE_FILE = re.compile(r"\[{1,2}(?:\.\.\.)?[A-Za-z0-9_]+\]{1,2}\.[a-z.]+|[_+$][a-z0-9-]+\.[a-z.]+")
 
 
 def words(stem: str) -> list[str]:
@@ -64,7 +65,7 @@ def _file_problem(parts: tuple[str, ...]) -> str | None:
                 f"name Markdown files in kebab-case, or all capitals for a conventional "
                 f"document such as README.md: {kebab(stem)}{suffix}"
             )
-    elif name.endswith(SCRIPT_CODE) and stem:
+    elif name.endswith(SCRIPT_CODE) and stem and not ROUTE_FILE.fullmatch(name):
         component = name.endswith(COMPONENTS) and PASCAL.fullmatch(stem)
         if not KEBAB.fullmatch(stem) and not component:
             return (

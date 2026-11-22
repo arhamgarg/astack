@@ -11,6 +11,7 @@ from contextlib import contextmanager
 from pathlib import Path
 
 BINARY_SNIFF = 8000
+GITLINK = "160000"
 
 
 def git(repo: Path, *args: str) -> str:
@@ -65,8 +66,11 @@ def merge_base(repo: Path, base: str) -> str:
 
 def changed(repo: Path, base_commit: str) -> dict[str, str | None]:
     found: dict[str, str | None] = {}
-    fields = git(repo, "diff", "--name-status", "--no-renames", "-z", base_commit).split("\0")
-    for status, path in zip(fields[0::2], fields[1::2], strict=False):
+    fields = git(repo, "diff", "--raw", "--no-renames", "-z", base_commit).split("\0")
+    for header, path in zip(fields[0::2], fields[1::2], strict=False):
+        old_mode, new_mode, *_, status = header.lstrip(":").split()
+        if GITLINK in (old_mode, new_mode):
+            continue
         found[path] = None if status == "A" else f"{base_commit}:{path}"
     for path in filter(
         None, git(repo, "ls-files", "--others", "--exclude-standard", "-z").split("\0")
