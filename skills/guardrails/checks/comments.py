@@ -6,7 +6,7 @@ import re
 import tokenize
 from pathlib import Path
 
-from repo import files, run
+from repo import files, read_text, run
 
 PRAGMA = re.compile(
     r"#\s*(noqa: [A-Z]+[0-9]+(, ?[A-Z]+[0-9]+)*"
@@ -18,7 +18,8 @@ PRAGMA = re.compile(
 )
 HASH_FILES = re.compile(r"(^|/)(Makefile|Dockerfile|\.gitignore)$|\.(sh|bash|zsh|toml|ya?ml)$")
 SLASH_FILES = re.compile(r"\.(js|mjs|cjs|jsx|ts|tsx|go|rs|swift|kt|java|c|h|cc|cpp|hpp)$")
-SLASH_DIRECTIVE = re.compile(r"//go:\w")
+DIRECTIVE = re.compile(r"//go:\w|/// <reference |// swift-tools-version:")
+HEADER_DIRECTIVE = re.compile(r"#\s*(syntax|escape|check)=")
 BLOCK = re.compile(r"""'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"|/\*.*?\*/""", re.DOTALL)
 FIX = (
     "encode the constraint in a name, a type, a test, or a lint rule, "
@@ -67,11 +68,13 @@ def _css(path: str, src: str) -> list[str]:
 def _lines(path: str, src: str) -> list[str]:
     markers = ("#",) if HASH_FILES.search(path) else ("//", "/*")
     failures = []
+    header = True
     for number, line in enumerate(src.splitlines(), 1):
         stripped = line.lstrip()
-        if number == 1 and stripped.startswith("#!"):
+        header = header and bool(HEADER_DIRECTIVE.match(stripped))
+        if (number == 1 and stripped.startswith("#!")) or header:
             continue
-        if stripped.startswith(markers) and not SLASH_DIRECTIVE.match(stripped):
+        if stripped.startswith(markers) and not DIRECTIVE.match(stripped):
             failures.append(f"{path}:{number}: comment; {FIX}")
     return failures
 
@@ -79,19 +82,22 @@ def _lines(path: str, src: str) -> list[str]:
 def check(repo: Path) -> list[str]:
     failures: list[str] = []
     for path in files(repo):
+        src = read_text(repo / path)
+        if src is None:
+            continue
         if path.endswith(".py"):
-            failures += _python(path, (repo / path).read_text())
+            failures += _python(path, src)
         elif path.endswith(".css"):
-            failures += _css(path, (repo / path).read_text())
+            failures += _css(path, src)
         elif HASH_FILES.search(path) or SLASH_FILES.search(path):
-            failures += _lines(path, (repo / path).read_text())
+            failures += _lines(path, src)
     return failures
 
 
 if __name__ == "__main__":
     run(
         "comments",
-        "Fail on any comment or docstring; only shebangs, Go directives, and bare tool "
-        "pragmas pass.",
+        "Fail on any comment or docstring. Shebangs, bare tool pragmas, and compiler or "
+        "parser directives pass.",
         check,
     )

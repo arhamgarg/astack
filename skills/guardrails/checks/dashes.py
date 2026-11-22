@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from repo import files, run, text
+from repo import files, read_text, run
 
 DASHES = (chr(0x2013), chr(0x2014))
 
@@ -10,7 +10,7 @@ DASHES = (chr(0x2013), chr(0x2014))
 def check(repo: Path) -> list[str]:
     failures = []
     for path in files(repo):
-        content = text(repo / path)
+        content = read_text(repo / path)
         if content is None:
             continue
         failures += [

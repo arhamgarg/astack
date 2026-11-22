@@ -38,13 +38,13 @@ def gitleaks_binary() -> str:
     found = shutil.which("gitleaks")
     if found is None:
         raise SystemExit(
-            f"secrets: gitleaks is not on PATH; install gitleaks {MINIMUM_VERSION} or later"
+            f"secret_scan: gitleaks is not on PATH; install gitleaks {MINIMUM_VERSION} or later"
         )
     reported = subprocess.run([found, "version"], check=True, capture_output=True, text=True).stdout
     version = tuple(int(part) for part in re.findall(r"\d+", reported)[:3])
     if version < tuple(int(part) for part in MINIMUM_VERSION.split(".")):
         raise SystemExit(
-            f"secrets: gitleaks {reported.strip()} is older than {MINIMUM_VERSION}; upgrade it"
+            f"secret_scan: gitleaks {reported.strip()} is older than {MINIMUM_VERSION}; upgrade it"
         )
     return found
 
@@ -74,9 +74,9 @@ def _scan(repo: Path, *args: str, env: dict[str, str] | None = None) -> tuple[li
         raise SystemExit(
             "\n".join(
                 [
-                    *(f"secrets: {error}" for error in errors),
-                    f"secrets: gitleaks exited with status {result.returncode}",
-                    f"secrets: {INCOMPLETE}",
+                    *(f"secret_scan: {error}" for error in errors),
+                    f"secret_scan: gitleaks exited with status {result.returncode}",
+                    f"secret_scan: {INCOMPLETE}",
                 ]
             )
         )
@@ -115,7 +115,7 @@ def check(repo: Path, base: str) -> list[str]:
     expected = _commits_with_text_changes(repo, span)
     if len(scanned) != 1 or scanned[0] < expected:
         raise SystemExit(
-            f"secrets: gitleaks reported {scanned or 'no count of'} commits scanned in "
+            f"secret_scan: gitleaks reported {scanned or 'no count of'} commits scanned in "
             f"{span}, but {expected} commits there change text; {INCOMPLETE}"
         )
     with worktree_index(repo) as env:
@@ -125,7 +125,7 @@ def check(repo: Path, base: str) -> list[str]:
 
 if __name__ == "__main__":
     run(
-        "secrets",
+        "secret_scan",
         "Fail when gitleaks, with the repository's .gitleaks.toml when it has one, finds a "
         "secret in the branch's commits or in the working tree, untracked files included.",
         check,

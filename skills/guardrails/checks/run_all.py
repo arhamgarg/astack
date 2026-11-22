@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 TREE = ("comments", "dashes", "links", "history", "naming")
-BRANCH = ("markdown", "whitespace", "file_size", "suppressions", "secrets")
+BRANCH = ("markdown", "whitespace", "file_size", "suppressions", "secret_scan")
 
 
 def main() -> int:

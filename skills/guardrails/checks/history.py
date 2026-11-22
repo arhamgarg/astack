@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from repo import files, run
+from repo import files, read_text, run
 
 HISTORY = re.compile(
     r"\bthis (?:pr|pull request|commit|change|conversation|machine)\b"
@@ -16,7 +16,7 @@ def check(repo: Path) -> list[str]:
     return [
         f"{path}:{number}: '{match.group()}': describe the code as it is, not how it changed"
         for path in files(repo, "*.md")
-        for number, line in enumerate((repo / path).read_text().splitlines(), 1)
+        for number, line in enumerate((read_text(repo / path) or "").splitlines(), 1)
         for match in HISTORY.finditer(line)
     ]
 

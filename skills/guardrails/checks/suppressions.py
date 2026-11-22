@@ -10,7 +10,7 @@ from collections import Counter
 from collections.abc import Iterator
 from pathlib import Path
 
-from repo import changed, git, merge_base, run
+from repo import changed, decoded, git, git_bytes, merge_base, read_text, run
 
 PYTHON_PRAGMA = re.compile(
     r"#\s*(?:noqa(?::\s*(?P<noqa>[A-Z]+[0-9]*(?:\s*,\s*[A-Z]+[0-9]*)*))?"
@@ -27,7 +27,13 @@ PYPROJECT_TABLES = ("ruff", "ty", "coverage", "importlinter")
 TOML_CONFIGS = ("ruff.toml", ".ruff.toml", "ty.toml", ".gitleaks.toml")
 INI_CONFIGS = (".coveragerc", ".importlinter")
 JSON_CONFIGS = (".oxlintrc.json", ".eslintrc.json", "biome.json", "tsconfig.json")
-TEXT_CONFIGS = (".pre-commit-config.yaml", "eslint.config.js", "eslint.config.mjs")
+TEXT_CONFIGS = (
+    ".pre-commit-config.yaml",
+    "eslint.config.js",
+    "eslint.config.mjs",
+    ".gitleaksignore",
+)
+SECRET_ALLOW = "gitleaks:allow"
 CONFIG_NAMES = ("pyproject.toml", *TOML_CONFIGS, *INI_CONFIGS, *JSON_CONFIGS, *TEXT_CONFIGS)
 TRAILER = "Allow-Suppression"
 TRAILER_LINE = re.compile(rf"^{TRAILER}\s*:", re.MULTILINE | re.IGNORECASE)
@@ -87,11 +93,11 @@ def _script(text: str) -> Iterator[str]:
 
 
 def _scan(path: str, text: str) -> Iterator[str]:
+    yield from (SECRET_ALLOW for _ in range(text.count(SECRET_ALLOW)))
     if path.endswith(".py"):
-        return _python(path, text)
-    if path.endswith(SCRIPT_SUFFIXES):
-        return _script(text)
-    return iter(())
+        yield from _python(path, text)
+    elif path.endswith(SCRIPT_SUFFIXES):
+        yield from _script(text)
 
 
 def _toml(path: str, text: str) -> dict:
@@ -182,19 +188,15 @@ def check(repo: Path, base: str) -> list[str]:
     units_before: dict[str, object] = {}
     units_after: dict[str, object] = {}
     for path, base_blob in changed(repo, base_commit).items():
-        if (
-            not path.endswith((".py", *SCRIPT_SUFFIXES))
-            and path.rsplit("/", 1)[-1] not in CONFIG_NAMES
-        ):
-            continue
         if base_blob is not None:
-            text = git(repo, "show", base_blob)
-            before.update((path, kind) for kind in _scan(path, text))
-            units_before.update(_config_units(path, text))
-        if (repo / path).is_file():
-            text = (repo / path).read_text()
-            after.update((path, kind) for kind in _scan(path, text))
-            units_after.update(_config_units(path, text))
+            old = decoded(git_bytes(repo, "show", base_blob))
+            if old is not None:
+                before.update((path, kind) for kind in _scan(path, old))
+                units_before.update(_config_units(path, old))
+        new = read_text(repo / path) if (repo / path).is_file() else None
+        if new is not None:
+            after.update((path, kind) for kind in _scan(path, new))
+            units_after.update(_config_units(path, new))
     total_before, total_after = _totals(before), _totals(after)
     grown = {kind for kind, count in total_after.items() if count > total_before[kind]}
     changed_units = {

@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from repo import changed, git, merge_base, run
+from repo import changed, git_bytes, merge_base, read_text, run
 
 BUDGET = 500
 SOURCE = re.compile(r"\.(py|js|mjs|cjs|jsx|ts|tsx|go|rs|swift|kt|java|c|h|cc|cpp|hpp|lean)$")
@@ -20,7 +20,10 @@ def check(repo: Path, base: str) -> list[str]:
     for path, base_blob in sorted(changed(repo, base_commit).items()):
         if not _counts_toward_budget(path) or not (repo / path).is_file():
             continue
-        lines = len((repo / path).read_text().splitlines())
+        content = read_text(repo / path)
+        if content is None:
+            continue
+        lines = len(content.splitlines())
         if lines <= BUDGET:
             continue
         if base_blob is None:
@@ -29,7 +32,7 @@ def check(repo: Path, base: str) -> list[str]:
                 "Split it along the concepts it owns before committing."
             )
             continue
-        was = len(git(repo, "show", base_blob).splitlines())
+        was = len(git_bytes(repo, "show", base_blob).splitlines())
         if was <= BUDGET:
             failures.append(
                 f"{path}: {lines} lines (was {was}); the change takes it past the {BUDGET}-line "

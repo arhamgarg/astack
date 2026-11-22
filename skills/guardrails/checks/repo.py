@@ -38,8 +38,11 @@ def files(repo: Path, *patterns: str) -> list[str]:
     return sorted(p for p in set(listing.split("\0")) if p and (repo / p).is_file())
 
 
-def text(path: Path) -> str | None:
-    data = path.read_bytes()
+def read_text(path: Path) -> str | None:
+    return decoded(path.read_bytes())
+
+
+def decoded(data: bytes) -> str | None:
     if b"\0" in data[:BINARY_SNIFF]:
         return None
     try:
@@ -49,7 +52,15 @@ def text(path: Path) -> str | None:
 
 
 def merge_base(repo: Path, base: str) -> str:
-    return git(repo, "merge-base", "HEAD", base).strip()
+    result = subprocess.run(
+        ["git", "merge-base", "HEAD", base], cwd=repo, capture_output=True, text=True, check=False
+    )
+    if result.returncode != 0:
+        raise SystemExit(
+            f"cannot find the merge base of HEAD and {base}: {result.stderr.strip()}. "
+            "Pass --base <branch the work merges into>, or run git remote set-head origin --auto"
+        )
+    return result.stdout.strip()
 
 
 def changed(repo: Path, base_commit: str) -> dict[str, str | None]:
