@@ -17,7 +17,8 @@ MIGRATION = re.compile(r"[0-9]{4}_[a-z0-9_]+")
 SCRIPT_CODE = (".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".css")
 COMPONENTS = (".tsx", ".jsx")
 ROUTE_FILE = re.compile(
-    r"\[{1,2}(?:\.\.\.)?[A-Za-z0-9_]+\]{1,2}\.[a-z.]+|(?:__|[_+$])[A-Za-z0-9-]*\.[a-z.]+"
+    r"\[{1,2}(?:\.\.\.)?[A-Za-z0-9_]+\]{1,2}\.[a-z.]+|(?:__?|\+)[a-z0-9-]+\.[a-z.]+"
+    r"|\$[A-Za-z0-9_]*\.[a-z.]+"
 )
 
 

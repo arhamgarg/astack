@@ -46,7 +46,9 @@ printf '#!/usr/bin/env bash\n# says hi\necho hi\n' > scripts/hi.sh
 printf '//go:build linux\npackage x\n// note\n' > src/app/x.go
 printf '# syntax=docker/dockerfile:1\n# escape=`\n# check=skip=all\nFROM scratch\n# note\n# syntax=late\n' > Dockerfile
 printf '# syntax=x\nkey: 1\n' > settings.yml
-mkdir -p build; for f in Containerfile build/app.dockerfile Dockerfile.dev; do printf '# syntax=x\nFROM scratch\n# note\n' > "$f"; done
+mkdir -p build src/main docs/ops; printf 'class B {\n// note\n}\n' > src/main/DockerfileBuilder.java; printf 'class E {\n  #count = 0;\n}\n' > src/main/DockerfileEditor.ts; printf '# Images\n' > docs/ops/Dockerfile.md
+printf 'export {}\n// note\n' > src/main/Containerfile.ts
+for f in Containerfile build/app.dockerfile Dockerfile.dev; do printf '# syntax=x\nFROM scratch\n# note\n' > "$f"; done
 printf '// swift-tools-version:5.9\nlet x = 1\n' > Package.swift
 mkdir -p web; printf '/// <reference types="node" />\nexport {}\n' > web/env.ts
 printf 'a { color: red; } /* note */\n' > web/site.css
@@ -58,9 +60,11 @@ expect comments 1 'settings.yml:1: comment'
 expect comments 1 'Containerfile:3: comment'
 expect comments 1 'build/app.dockerfile:3: comment'
 expect comments 1 'Dockerfile.dev:3: comment'
+expect comments 1 'src/main/DockerfileBuilder.java:2: comment'
+expect comments 1 'src/main/Containerfile.ts:2: comment'
 expect comments 1 'web/site.css:1: comment'
-lacks comments 'ok.py|x.go:1|hi.sh:1|Dockerfile:[1-4]:|env.ts|Package.swift|Containerfile:1|dockerfile:1|Dockerfile.dev:1'
-git checkout -q -- src/app/__init__.py; rm -r src/app/ok.py scripts/hi.sh src/app/x.go Dockerfile settings.yml Package.swift web build Containerfile Dockerfile.dev
+lacks comments 'ok.py|x.go:1|hi.sh:1|Dockerfile:[1-4]:|env.ts|Package.swift|Containerfile:1|dockerfile:1|Dockerfile.dev:1|DockerfileEditor|Dockerfile.md'
+git checkout -q -- src/app/__init__.py; rm -r src/app/ok.py scripts/hi.sh src/app/x.go Dockerfile settings.yml Package.swift web build Containerfile Dockerfile.dev src/main docs/ops
 printf 'int x = 1; /* caf\xe9 */\n' > src/app/legacy.c
 expect comments 0 ''
 expect file_size 0 ''
@@ -94,18 +98,19 @@ printf '# Guide\n\nThis PR adds a guide.\n' > docs/guide.md
 expect history 1 "docs/guide.md:3: 'This PR'"
 git checkout -q -- docs/guide.md
 
-mkdir -p src/BadDir src/app/BadPkg; printf 'x = 1\n' > src/BadDir/MyMod.py; printf '# x\n' > docs/My_Notes.md; touch src/app/BadPkg/__init__.py; printf 'x = 1\n' > src/app/0002_extra.py
+mkdir -p src/BadDir src/app/BadPkg; printf 'x = 1\n' > src/BadDir/MyMod.py; printf '# x\n' > docs/My_Notes.md; touch src/app/BadPkg/__init__.py; printf 'x = 1\n' > src/app/0002_extra.py; mkdir -p web; printf 'export {}\n' > web/_fooBar.ts
 expect naming 1 'src/BadDir/MyMod.py: name folders in lowercase kebab-case or snake_case: bad-dir'
 expect naming 1 'docs/My_Notes.md: name Markdown files in kebab-case'
 expect naming 1 'src/app/BadPkg/__init__.py: name Python package folders in snake_case: bad_pkg'
 expect naming 1 'src/app/0002_extra.py: name Python modules in snake_case'
-rm -r src/BadDir docs/My_Notes.md src/app/BadPkg src/app/0002_extra.py
+expect naming 1 'web/_fooBar.ts: name script code in kebab-case'
+rm -r src/BadDir docs/My_Notes.md src/app/BadPkg src/app/0002_extra.py web
 mkdir -p formal/Proofs web/app/[slug] .github/ISSUE_TEMPLATE skills/demo docs/_static src/app/migrations
 printf 'theorem t : True := trivial\n' > formal/Proofs/Basic.lean
-mkdir -p 'web/app/(shop)/@modal/[...slug]' 'web/app/(.)photo' web/pages web/routes
-printf 'export {}\n' > 'web/app/(.)photo/page.tsx'
+mkdir -p 'web/app/(shop)/@modal/[...slug]' web/pages web/routes
+for d in '(.)photo' '(..)photo' '(...)photo' '(..)(..)photo'; do mkdir -p "web/app/$d"; printf 'export {}\n' > "web/app/$d/page.tsx"; done
 printf 'export {}\n' > web/Button.tsx; printf 'export {}\n' > web/app/[slug]/page.tsx; printf 'export {}\n' > 'web/app/(shop)/@modal/[...slug]/page.tsx'
-for f in _app.tsx '[id].tsx' '[...slug].tsx' '[[...slug]].tsx'; do printf 'export {}\n' > "web/pages/$f"; done; for f in +page.ts '$id.tsx' '$postId.tsx' '$.tsx' __root.tsx; do printf 'export {}\n' > "web/routes/$f"; done
+for f in _app.tsx '[id].tsx' '[...slug].tsx' '[[...slug]].tsx'; do printf 'export {}\n' > "web/pages/$f"; done; for f in +page.ts '$id.tsx' '$postId.tsx' '$post_id.tsx' '$.tsx' __root.tsx; do printf 'export {}\n' > "web/routes/$f"; done
 printf 'name: bug\n' > .github/ISSUE_TEMPLATE/bug.yml; printf 'x\n' > .github/pull_request_template.md
 printf '# Demo\n' > skills/demo/SKILL.md; printf '# Conduct\n' > CODE_OF_CONDUCT.md
 printf 'a {}\n' > docs/_static/site.css; printf 'x = 1\n' > src/app/migrations/0001_initial.py

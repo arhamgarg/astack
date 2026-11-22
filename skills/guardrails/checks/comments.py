@@ -20,7 +20,10 @@ HASH_FILES = re.compile(r"(^|/)(Makefile|\.gitignore)$|\.(sh|bash|zsh|toml|ya?ml
 SLASH_FILES = re.compile(r"\.(js|mjs|cjs|jsx|ts|tsx|go|rs|swift|kt|java|c|h|cc|cpp|hpp)$")
 DIRECTIVE = re.compile(r"//go:\w|/// <reference |// swift-tools-version:")
 HEADER_DIRECTIVE = re.compile(r"#\s*(syntax|escape|check)=")
-DOCKERFILE = re.compile(r"(^|/)(Dockerfile|Containerfile)[^/]*$|\.dockerfile$")
+DOCKERFILE = re.compile(
+    r"(^|/)(Dockerfile|Containerfile)(\.(?!(md|markdown|mdx|rst|txt)$)[A-Za-z0-9_-]+)?$"
+    r"|\.dockerfile$"
+)
 BLOCK = re.compile(r"""'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"|/\*.*?\*/""", re.DOTALL)
 FIX = (
     "encode the constraint in a name, a type, a test, or a lint rule, "
@@ -66,9 +69,7 @@ def _css(path: str, src: str) -> list[str]:
     ]
 
 
-def _lines(path: str, src: str) -> list[str]:
-    docker = bool(DOCKERFILE.search(path))
-    markers = ("#",) if HASH_FILES.search(path) or docker else ("//", "/*")
+def _lines(path: str, src: str, markers: tuple[str, ...], docker: bool) -> list[str]:
     failures = []
     header = True
     for number, line in enumerate(src.splitlines(), 1):
@@ -91,8 +92,10 @@ def check(repo: Path) -> list[str]:
             failures += _python(path, src)
         elif path.endswith(".css"):
             failures += _css(path, src)
-        elif HASH_FILES.search(path) or DOCKERFILE.search(path) or SLASH_FILES.search(path):
-            failures += _lines(path, src)
+        elif SLASH_FILES.search(path):
+            failures += _lines(path, src, ("//", "/*"), docker=False)
+        elif HASH_FILES.search(path) or DOCKERFILE.search(path):
+            failures += _lines(path, src, ("#",), docker=bool(DOCKERFILE.search(path)))
     return failures
 
 
