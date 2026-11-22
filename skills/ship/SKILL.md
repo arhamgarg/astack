@@ -22,7 +22,7 @@ Done when every issue in scope is merged and closed, cleanup is verified, and th
 
 ## 1. Clean up and gather state
 
-The loop owns branches matching step 3 and worktrees under its path. Delete them only when no uncommitted work or commits unreachable from `<base>` or an open PR would be lost. Keep the current worktree and each open loop PR's branch and worktree. Report anything unsafe to delete.
+The loop owns the branches it created for issues it selected, named as step 3 sets, and their worktrees. Delete them only when no uncommitted work or commits unreachable from `<base>` or an open PR would be lost. Keep the current worktree and each open loop PR's branch and worktree. Report anything unsafe to delete.
 
 Fetch with `--prune`, fast-forward `<base>` in the main checkout, and confirm `gh auth status`. Gather open issues with labels and dependencies, open PRs, and worktree status. Resume an open loop PR before selecting an issue.
 
@@ -85,7 +85,7 @@ If the environment supports thread links to PRs, link it now.
 
 Standard-risk documentation-only changes skip review unless a repository check requires the step 9 block. Set `## Independent review` to `- Not required: Standard risk, documentation only` and continue at step 9.
 
-Start one read-only reviewer on the review skill's reviewer model when the PR opens. Run required checks concurrently, including a local gate that posts a status. Use fresh context and `high` or `xhigh` effort. Give the reviewer:
+Start one read-only reviewer on the review skill's reviewer model when the PR opens. Run required checks concurrently, including a local gate that posts a status. Use fresh context and `high` effort, or `xhigh` for Critical risk, where the host supports it. Give the reviewer:
 
 - the PR URL, repository path, and base and head revisions
 - the issue and acceptance criteria
@@ -114,12 +114,12 @@ After `APPROVE` and after any pending check passes, confirm the head matches the
 ```text
 ## Independent review
 - Model: `<reviewer model id>`
-- Reasoning effort: `<high or xhigh>`
+- Reasoning effort: `<high, xhigh, or unsupported>`
 - Reviewed head: `<full 40-character SHA>`
 - Verdict: `APPROVE`
 ```
 
-Any later push invalidates this evidence and returns to step 7. When the push is a rebase whose `git range-diff` shows only base changes, the new reviewer reads only that range-diff and confirms the head.
+Any later push invalidates this evidence and returns to step 7. For a rebase, give the new reviewer the approved head and the step 5 `git range-diff` output, and ask it to confirm the current head.
 
 Approval-evidence bootstrap: if a repository check requires this block on the current head, approval may precede that check passing. Its only failure must be the missing block, and every other required check must pass. The check must pass once the block is recorded.
 

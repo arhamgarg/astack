@@ -1,8 +1,8 @@
 # Design reference
 
-The [`design`](SKILL.md) skill and its builder read this. § Hard rules always apply. Every other section is a default. The brief, the host's rendering contract, and the project's design system override a default, in that order, including a request for a look this file calls a tell.
+The [`design`](SKILL.md) skill and its builder read this. § Hard rules apply unless the user's own words override one. Every other section is a preference. The brief, the host's rendering contract, and the project's design system override a preference, in that order, including a request for a look this file calls a tell.
 
-For a new identity, work as the design lead at a studio known for giving every client an identity no one confuses with anyone else's, and take aesthetic risk where the subject justifies it. For an app UI inside a system, work as the system's maintainer: match it, extend it with named tokens, and spend novelty only where it makes the data easier to read.
+For a new identity, work as the design lead at a studio known for giving every client an identity no one confuses with anyone else's, and take aesthetic risk where the subject justifies it. For an app UI, work as the maintainer of its design system, or of the small one you set up when none exists: match it, extend it with named tokens, and spend novelty only where it makes the data easier to read. An app UI uses § Apps, dashboards, and data-dense UI and skips § Tells. A new identity uses § Landing pages and sites when it is a marketing page, and § Tells.
 
 ## Hard rules
 
@@ -14,7 +14,7 @@ For a new identity, work as the design lead at a studio known for giving every c
 - Every data region has hover and focus, loading, empty, error, and long-text states, plus stale and unknown states for live data.
 - Color is never the only signal: pair state colors with a word, a shape, or a position.
 - Numbers in tables are right-aligned in tabular figures, and the page uses one format for each kind of figure.
-- Use only real figures, quotes, and outcomes. Show no success message without a real request behind it.
+- Present only real figures, quotes, and outcomes as real. Mark sample data in a mockup as sample. Show no success message without a real request behind it.
 - A public page shows its content with JavaScript off. A page that owns its background sets it on `<html>` in the first stylesheet, so it never flashes.
 
 ## Process
@@ -25,9 +25,9 @@ For a new identity, work as the design lead at a studio known for giving every c
    - Type: the typefaces and their roles.
    - Layout: a one-sentence concept plus ASCII wireframes for at least two alternatives, compared, with the text alignment rule stated.
    - Principles: what makes this page belong to this subject, and the defining layout decision. Name the character in two or three concrete words (never clean, modern, sleek, minimal, or premium), the one or two moments where color, material, and detail concentrate while the chrome stays quiet, and one signature detail used consistently.
-3. **Review the plan against the brief.** For each part, imagine a similar brief and ask whether you would make the same choice. If you would, it is a default, not a choice. Revise it and write down what changed and why. Check every part against § Tells.
+3. **Review the plan against the brief.** For each part, imagine a similar brief and ask whether you would make the same choice. If you would, it is a habit, not a choice. Revise it and write down what changed and why. For a new identity, check every part against § Tells.
 4. **Build** from the revised plan. Write the copy before setting type and layout, because headline length decides size and position.
-5. **Critique.** Screenshot at the widths and color schemes the skill checks, if your environment can render pages. Fix what you see, and remove one accessory if § Restraint allows one.
+5. **Critique.** Screenshot at 1440px and 390px wide, or the host's frame widths, in each color scheme you support, if your environment can render pages. Fix what you see, and remove one accessory if § Restraint allows one.
 
 ## Color and theme
 
@@ -43,7 +43,7 @@ For a new identity, work as the design lead at a studio known for giving every c
 
 ## Typography
 
-For a new identity, choose typefaces for this brief, and treat Inter, Roboto, Arial, Open Sans, and system stacks as defaults to beat. For an app UI, a neutral sans with tabular figures, including those faces, is a sound choice. Use one family, or two that are clearly distinct.
+For a new identity, choose typefaces for this brief, and treat Inter, Roboto, Arial, Open Sans, and system stacks as habits to beat. For an app UI, a neutral sans with tabular figures, including those faces, is a sound choice. Use one family, or two that are clearly distinct.
 
 - Set a modular type scale. Use fluid sizes via `clamp()` for display text, and fixed sizes for tables and controls.
 - When type is the headline or visual element, make the treatment itself part of the design.
@@ -67,10 +67,9 @@ For a new identity, choose typefaces for this brief, and treat Inter, Roboto, Ar
 ### Apps, dashboards, and data-dense UI
 
 - Keep app proportions: a shell that fills the viewport (except inside a host frame), a sidebar of about 200 to 320px, and fluid content, never a narrow centered column.
-- Density beats breathing room. Use compact rows (28 to 36px on desktop), group with alignment and hairlines, and keep 44px targets on phones.
-- Keep the text that changes what the operator does: units, as-of times, data source and provenance, and the consequence of an action. § Restraint does not remove it.
-- Live data shows its as-of time and a distinct stale state. An update changes the value in place, without shifting its width, and without more than one brief highlight.
-- Tables: sticky header, sortable columns with `aria-sort`, right-aligned numbers, truncation that keeps the full value reachable, a fixed column order, and on phones the priority columns with the rest of each row behind an expand control.
+- Density beats breathing room. Use compact rows (28 to 36px on desktop) and group with alignment and hairlines.
+- Live data shows its as-of time. An update changes the value in place, without shifting its width, and without more than one brief highlight.
+- Tables: sticky header, sortable columns with `aria-sort`, truncation that keeps the full value reachable, a fixed column order, and on phones the priority columns with the rest of each row behind an expand control.
 - Charts:
   - Give charts a hierarchy: one main chart clearly largest, one accent on the series that matters and neutral steps for the rest, and a muted grid.
   - Match the type to the data: a line for a trend, bars for a comparison, a stacked bar or ranked list for a share.
@@ -83,7 +82,7 @@ For a new identity, choose typefaces for this brief, and treat Inter, Roboto, Ar
 
 ## Motion and interaction
 
-- Run each animation once, in answer to a user action, to show what changed, and let it end. Never pulse, shimmer, spin, or animate a blur. A determinate progress bar is allowed.
+- Run each animation once, in answer to a user action or a data update, to show what changed, and let it end. Never pulse, shimmer, spin, or animate a blur. A determinate progress bar is allowed.
 - Use a flat loading placeholder, and give images and embeds `aspect-ratio` or width and height.
 - Keep hover and focus inside the palette.
 - Animate `transform` and `opacity` only. For height changes, transition `grid-template-rows`.
@@ -106,7 +105,7 @@ Pack information densely and keep copy minimal. Use spacing, alignment and type 
 
 ## Tells
 
-Each of these is a default that shows up whatever the subject. Check them when building a new identity. Inside an existing system or an app UI, the system wins, and dense columns, hairline rules, monospace identifiers, and green and red signs for gains and losses are conventions there, not tells.
+Each of these is a habit that shows up whatever the subject. Check them for a new identity. In an app UI, dense columns, hairline rules, monospace identifiers, and green and red signs for gains and losses are conventions there, not tells.
 
 **Palettes**
 - warm cream background (near `#F4F1EA`) with a high-contrast serif and a terracotta accent (near `#D97757`)
@@ -136,4 +135,4 @@ Each of these is a default that shows up whatever the subject. Check them when b
 - emoji in labels, badges, and a pill badge above the headline
 - a logo as a gradient or sparkle tile instead of the name as text with a flat mark.
 
-Final check: if you showed this page to someone and said "AI made this", would they believe it at once? If so, find the default that gave it away and replace it.
+Final check: if you showed this page to someone and said "AI made this", would they believe it at once? If so, find the habit that gave it away and replace it.

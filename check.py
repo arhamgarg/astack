@@ -31,6 +31,8 @@ def problems() -> list[str]:
                 found.append(f"{where}: frontmatter needs name and description first")
             elif match[1] != doc.parent.name:
                 found.append(f"{where}: name {match[1]} differs from its directory")
+            elif ": " in text.split("\ndescription: ", 1)[1].split("\n", 1)[0]:
+                found.append(f"{where}: description has ': ', which strict YAML rejects")
     return found
 
 
