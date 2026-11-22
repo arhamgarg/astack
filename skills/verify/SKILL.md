@@ -1,6 +1,6 @@
 ---
 name: verify
-description: Use when asked to prove an invariant, model-check behaviour, or work on formal verification, when changing state machines or Critical logic, or when reviewing formal evidence.
+description: Use when asked to prove an invariant, model-check behaviour, or work on formal verification, when changing state machines or Critical logic, or when reviewing formal evidence. Not the harness's `/verify` pre-commit step.
 ---
 
 # Verify
