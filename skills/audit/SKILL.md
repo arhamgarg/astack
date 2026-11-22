@@ -22,7 +22,7 @@ Done when every verified class is reported or filed, every review escape is name
 
 Read linter, formatter, and type-checker configuration and ignores, dependencies, recent history, uncommitted changes, and existing tracker issues. Without tracker access, report unchecked deduplication and do not file.
 
-Read the ledger: the open tracker issue titled `audit: ledger`. Each comment is one audit's entry, giving its commit SHA, the paths read in full, lines read, verified finding count, and filed issue numbers. A path is covered when an entry read it in full and `git diff --quiet <entry SHA> HEAD -- <path>` succeeds. Audit only uncovered paths unless the scope is `full` or names a path.
+Read the ledger: the open tracker issue titled `audit: ledger`, with one entry per comment in the § Record the ledger entry format. A path is covered when an entry read it in full, it has no uncommitted changes, and `git diff --quiet <entry SHA> HEAD -- <path>` succeeds. An entry whose SHA is unknown covers nothing. Without tracker access, or with more than one open ledger issue, treat every path as uncovered and report why.
 
 ## Look for
 
@@ -47,7 +47,9 @@ Severity follows `review`, section 5.
 
 ## File issues
 
-File one issue per class, split into vertical slices when large. Apply severity labels when available. Under Problem, give the class search: a command (`grep`, `ast-grep`, or a script) that lists every instance, with its hit count at the verified commit. Criteria must name a lint, test, or type that prevents recurrence and fails on every hit of the class search.
+File one issue per class. Apply severity labels when available. Under Problem, give the class search: a command (`grep`, `ast-grep`, or a script) that lists every instance, with its hit count at the verified commit and any hits that are not instances. Criteria must name a lint, test, or type that prevents recurrence and fails on every true instance.
+
+Split a large class into vertical slices. Each slice's Scope names the instances it owns, and only the last slice's criteria name the guard.
 
 Check validation, failure modes, idempotency and retry, authorization, concurrency and ordering, data lifecycle, external-dependency failure, state transitions, and observability. Classify each as a criterion, existing behaviour, not applicable, or an open question under Problem.
 
@@ -70,7 +72,7 @@ Use a Conventional Commits subject without the type for the title.
 
 ## Record the ledger entry
 
-When filing, add a comment to the ledger issue, creating the issue first if it is missing:
+When filing, add a comment to the ledger issue. If it is missing, create it and pin it with `gh issue pin`. Use this format:
 
 ```text
 SHA: <full commit SHA>
@@ -79,7 +81,9 @@ Lines read: <count of lines in fully read text files>
 Verified findings: <count> (<count per thousand lines read>)
 Issues: <numbers filed or extended>
 Paths read in full:
-<one path per line>
+<one path per line, or a directory when every file in it was read in full>
 ```
+
+List only paths without uncommitted changes. When an entry exceeds one comment, continue it in further comments that each start with the SHA line.
 
 In a report-only audit, put the same entry in the report instead.

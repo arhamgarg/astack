@@ -36,7 +36,7 @@ Unless the request names one, rank open issues by, in order:
 4. highest value
 5. lowest number
 
-An issue is eligible when it has no unresolved dependency or conflicting open PR. Take the first eligible issue. Fetch and rerank before each issue.
+An issue is eligible when it has no unresolved dependency or conflicting open PR, is not the audit skill's `audit: ledger` issue, and was not filed by this run for a review finding. The ledger issue stays open. Take the first eligible issue. Fetch and rerank before each issue.
 
 ## 3. Branch and worktree
 
@@ -46,7 +46,9 @@ Use one branch and PR per issue, never stacked.
 
 Before editing, map each acceptance criterion to a test, command, or inspection. For a bug, reproduce it end to end first unless that is impossible locally.
 
-Fix the whole class. Run the issue's class search, or write one (`grep`, `ast-grep`, or a script) that lists every instance when the issue has none. Every hit is in scope, and the issue's guard (lint, type, or test) must fail on each unfixed hit.
+When the issue names a defect class, fix the whole class. Run its class search, or write one as the sibling audit skill's § File issues defines it. Every true instance in the issue's `## Scope` is in scope. When the criteria name a guard, it must fail on each unfixed true instance.
+
+When the project sets a PR size limit and the fix would exceed it, split the issue before editing. File each vertical slice as an issue in the audit format, with `Blocked by #N` naming the slice before it. Close the original issue with a comment listing the slices. The slices replace it in this run's scope, and the first slice continues the loop here.
 
 ## 4. Implement and commit
 
@@ -54,13 +56,13 @@ Search for and reuse existing rules, constants, parsers, and factories before wr
 
 An issue requiring an irreversible change needs two PRs, each through the full loop. Merge the reversible work first, then the irreversible work.
 
-Keep the PR under the project's PR size limit. Split a larger feature into vertical slices, one PR each through the full loop, and keep a mechanical move free of behaviour changes.
+Keep a mechanical move free of behaviour changes.
 
 Commit each independently explainable change. Stage by path (`git commit -- <paths>`), never `-a` or `git add -A`. Keep review fixes as separate commits until merge. Use Conventional Commits (`<type>[scope][!]: <description>`) for commit subjects and PR titles. Fix a deliberately failing test commit in the same session. Report skipped hooks.
 
 ## 5. Verify
 
-Run the required gates, then `git diff --check`. Rerun the class search and record its command and zero remaining hits, or each remaining hit with its reason, under `## Verification`. Apply the review skill's CRAP, duplication, and mutation checklist item to changed code, recording equivalent survivors with reasons and inherited survivors as counts under `## Verification`. Read the final diff and commit list against the merge base.
+Run the required gates, then `git diff --check`. Rerun the class search. Under `## Verification`, record its command and zero remaining true instances in scope, and name each other hit with the reason it is not one. Apply the review skill's CRAP, duplication, and mutation checklist item to changed code, recording equivalent survivors with reasons and inherited survivors as counts under `## Verification`. Read the final diff and commit list against the merge base.
 
 If `<remote>/<base>` moved, rebase and rerun the gates before pushing. After each rebase, run `git range-diff <old-base>..<old-head> <new-base>..<new-head>`. Confirm every commit survived with only conflict resolution changed.
 
@@ -107,7 +109,7 @@ Rerun affected gates, push, and handle checks as in step 7. Start a new round wi
 
 ## 9. Record the review and wait for green
 
-After `APPROVE` and after any pending check passes, confirm the head matches the reviewed head. Post the reviewer's full section 6 report from the final round as a PR comment, with `## Independent review report` as its first line followed by the same four lines below, then the report itself, and the dispositions of every earlier finding. Then replace `## Independent review` with exactly:
+After `APPROVE` and after any pending check passes, confirm the head matches the reviewed head. Post the reviewer's section 6 report from the final round as a PR comment, with `## Independent review report` as its first line followed by the same four lines below, then the report. In the comment, cite evidence by command and result, use repository-relative paths, and leave out machine-local paths and personal identifiers. Then replace `## Independent review` with exactly:
 
 ```text
 ## Independent review
