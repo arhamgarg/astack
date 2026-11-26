@@ -163,6 +163,9 @@ sed -i.bak '$d' $A; rm $A.bak
 git add -A; git commit -qm 'chore: widen'; git push -q origin work:main 2>/dev/null; git fetch -q origin
 printf 'from __future__ import annotations\n\nimport sys  # noqa: F401\n' > src/app/sup2.py
 expect suppressions 1 'src/app/sup2.py: `noqa: F401` count 1 \(was 0\)'
+printf 'noqa: F401 | the import registers a codec\n' >> $A
+expect suppressions 0 ''
+git checkout -q -- $A
 printf 'noqa:F401|the import registers a codec\n' >> $A
 expect suppressions 0 ''
 git checkout -q -- $A; rm src/app/sup2.py; git push -qf origin main:main 2>/dev/null; git fetch -q origin
