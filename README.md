@@ -10,6 +10,7 @@ The agent instructions and skills I use every day. They work in both Claude Code
 | [`review`](skills/review/SKILL.md) | "review this PR" | Reviews a PR, branch, commit, or diff for bugs and merge safety, ranked by risk. |
 | [`audit`](skills/audit/SKILL.md) | "audit this" | Finds tech debt and architecture problems with `path:line` evidence, and files issues when asked. |
 | [`verify`](skills/verify/SKILL.md) | "prove this invariant" | Checks a property with contracts, property tests, model checking, or a Lean proof. |
+| [`guardrails`](skills/guardrails/SKILL.md) | "add guardrails to this repo" | Copies ten mechanical checks into a repo, such as no comments, Markdown that may only shrink, and reviewed suppressions, and sets up ruff API bans and import layer contracts. |
 | [`design`](skills/design/SKILL.md) | "design a page" | Ranks the user, the host and the project's design system above its reference, builds small changes itself or hands a new page to a builder, and checks the result against hard rules for contrast, keyboard use and motion. |
 | [`engineering`](skills/engineering/SKILL.md) | (automatic) | Working rules for code: the simplest fix, no comments, behaviour tests, and the checks each change needs. |
 | [`unslop`](skills/unslop/SKILL.md) | (automatic) | Rules for plain prose: no AI vocabulary, no dashes, and one idea per sentence. |
@@ -40,6 +41,7 @@ cp astack/AGENTS.md ~/.codex/AGENTS.md
 - Subagents for `design`, and for the reviewer that `ship` starts.
 - `uv`, `ruff`, and `ty` for Python work under `engineering`.
 - Lean 4 or Dafny for proofs in `verify`, when a property needs one.
+- Python 3.11 or later for the `guardrails` checks, and gitleaks 8.30.1 or later for its secret scan.
 
 ## Make them yours
 
