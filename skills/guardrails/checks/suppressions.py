@@ -10,7 +10,7 @@ from collections import Counter
 from collections.abc import Iterator
 from pathlib import Path
 
-from repo import changed, decoded, git, git_bytes, merge_base, read_text, run
+from repo import changed, decoded, git_bytes, merge_base, read_text, run
 
 PYTHON_PRAGMA = re.compile(
     r"#\s*(?:noqa(?::\s*(?P<noqa>[A-Z]+[0-9]*(?:\s*,\s*[A-Z]+[0-9]*)*))?"
@@ -36,18 +36,17 @@ TEXT_CONFIGS = (
 SECRET_ALLOW = "gitleaks" + ":allow"
 SECRET_ALLOW_KIND = "gitleaks: allow"
 CONFIG_NAMES = ("pyproject.toml", *TOML_CONFIGS, *INI_CONFIGS, *JSON_CONFIGS, *TEXT_CONFIGS)
-TRAILER = "Allow-Suppression"
-TRAILER_LINE = re.compile(rf"^{TRAILER}\s*:", re.MULTILINE | re.IGNORECASE)
+ALLOW_FILE = "scripts/checks/allowed-suppressions.txt"
 SCRIPT_KINDS = ("eslint-disable", "oxlint-disable", "biome-ignore", "@ts-")
 REMEDY = (
-    "Fix the code the rule flags. If the rule is wrong for this file, add a "
-    f"`{TRAILER}: <kind>` trailer naming the kind to the commit that adds it, "
-    "with the reason in the message; the PR then needs an independent review."
+    "Fix the code the rule flags. If the rule is wrong for this file, add "
+    f"the line `<kind> | <reason>` to {ALLOW_FILE}; the PR then needs an independent review."
 )
 SCRIPT_REMEDY = (
     "The comments check refuses script comments, so remove the directive and fix the code "
     "the rule flags. If the rule is wrong for this file, turn it off for the file in the "
-    "linter config's overrides and add the trailer that the config change then needs."
+    "linter config's overrides and allow the config change in "
+    f"{ALLOW_FILE}."
 )
 
 
@@ -147,24 +146,24 @@ def _kind(text: str) -> str:
     return re.sub(r"\s*:\s*", ": ", text.strip().strip("`").strip(), count=1)
 
 
-def _trailers(repo: Path, base_commit: str) -> tuple[set[str], list[str]]:
-    log = git(
-        repo,
-        "log",
-        f"--format=%h%x01%B%x01%(trailers:key={TRAILER},valueonly,separator=%x02)%x00",
-        f"{base_commit}..HEAD",
-    )
+def _lines(text: str | None) -> Counter[str]:
+    return Counter(line.strip() for line in (text or "").splitlines() if line.strip())
+
+
+def _allowances(repo: Path, changes: dict[str, str | None]) -> tuple[set[str], list[str]]:
+    if ALLOW_FILE not in changes:
+        return set(), []
+    blob, path = changes[ALLOW_FILE], repo / ALLOW_FILE
+    old = _lines(decoded(git_bytes(repo, "show", blob)) if blob else None)
+    new = _lines(read_text(path) if path.is_file() else None)
     allowed: set[str] = set()
     failures = []
-    for record in filter(None, (record.lstrip("\n") for record in log.split("\0"))):
-        commit, body, trailers = record.split("\x01")
-        values = [value for value in trailers.split("\x02") if value.strip()]
-        allowed.update(_kind(value) for value in values)
-        if len(TRAILER_LINE.findall(body)) > len(values):
-            failures.append(
-                f"{commit}: git does not read an `{TRAILER}:` line in this commit as a trailer; "
-                "the trailer must sit in the message's final paragraph"
-            )
+    for line in sorted((new - old).keys()):
+        kind, _, reason = line.partition("|")
+        if reason.strip():
+            allowed.add(_kind(kind))
+        else:
+            failures.append(f"{ALLOW_FILE}: `{line}` gives no reason; write `<kind> | <reason>`")
     return allowed, failures
 
 
@@ -176,9 +175,8 @@ def _failure(path: str, kind: str, was: int, now: int) -> str:
 def _config_failure(unit: str) -> str:
     return (
         f"config {unit} differs from the merge base; tool configuration lists the exceptions "
-        "to the rules, so any change to it is a reviewed architecture change. Add the line "
-        f"`{TRAILER}: config {unit}` to the final paragraph of the commit message that "
-        "changes it, with the reason in the message; the PR then needs an independent review."
+        f"to the rules, so any change to it is a reviewed architecture change. Add the line "
+        f"`config {unit} | <reason>` to {ALLOW_FILE}; the PR then needs an independent review."
     )
 
 
@@ -188,7 +186,8 @@ def check(repo: Path, base: str) -> list[str]:
     after: Counter[tuple[str, str]] = Counter()
     units_before: dict[str, object] = {}
     units_after: dict[str, object] = {}
-    for path, base_blob in changed(repo, base_commit).items():
+    changes = changed(repo, base_commit)
+    for path, base_blob in changes.items():
         if base_blob is not None:
             old = decoded(git_bytes(repo, "show", base_blob))
             if old is not None:
@@ -205,10 +204,10 @@ def check(repo: Path, base: str) -> list[str]:
         for unit in units_before.keys() | units_after.keys()
         if units_before.get(unit) != units_after.get(unit)
     }
-    allowed, failures = _trailers(repo, base_commit)
+    allowed, failures = _allowances(repo, changes)
     failures += [
-        f"{TRAILER}: {kind}: names nothing this branch adds or changes; "
-        "correct the kind or drop the trailer"
+        f"{ALLOW_FILE}: `{kind}` names nothing this branch adds or changes; "
+        "correct the kind or remove the line"
         for kind in sorted(allowed - grown - changed_units)
     ]
     failures += [
@@ -225,7 +224,7 @@ if __name__ == "__main__":
     run(
         "suppressions",
         "Fail when a change adds an inline lint, type, coverage, or formatter suppression, "
-        f"or changes tool configuration, without an {TRAILER} commit trailer.",
+        f"or changes tool configuration, without a line in {ALLOW_FILE} that allows it.",
         check,
         takes_base=True,
     )

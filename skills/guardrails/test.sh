@@ -146,25 +146,34 @@ git checkout -q -- src/app/feeds.py
 
 printf 'from __future__ import annotations\n\nimport os  # noqa: F401\n' > src/app/sup.py
 expect suppressions 1 'src/app/sup.py: `noqa: F401` count 1 \(was 0\)'
-git add -A; git commit -qm 'feat: add sup' -m 'Allow-Suppression: noqa: F401' -m 'The import registers a codec.'
-expect suppressions 1 'does not read an `Allow-Suppression:` line'
-git commit -q --amend -m 'feat: add sup' -m 'The import registers a codec.' -m 'Allow-Suppression: noqa: F401'
+A=scripts/checks/allowed-suppressions.txt
+printf 'noqa: F401\n' > $A
+expect suppressions 1 'allowed-suppressions.txt: `noqa: F401` gives no reason'
+printf 'noqa: F401 | the import registers a codec\n' > $A
+expect suppressions 0 ''
+git add -A; git commit -qm 'feat: add sup'
 expect suppressions 0 ''
 printf '[tool.ruff]\nline-length = 120\n' > pyproject.toml
 expect suppressions 1 'config pyproject.toml \[tool.ruff\] differs'
-git add -A; git commit -qm 'chore: widen' -m 'Allow-Suppression: config pyproject.toml [tool.ruff]'
+printf 'config pyproject.toml [tool.ruff] | long URLs in fixtures\n' >> $A
 expect suppressions 0 ''
-git commit -q --allow-empty -m 'chore: noop' -m 'Allow-Suppression: noqa: E999'
-expect suppressions 1 'Allow-Suppression: noqa: E999: names nothing'
-git reset -q --hard HEAD~1
+printf 'noqa: E999 | nothing\n' >> $A
+expect suppressions 1 'allowed-suppressions.txt: `noqa: E999` names nothing'
+sed -i.bak '$d' $A; rm $A.bak
+git add -A; git commit -qm 'chore: widen'; git push -q origin work:main 2>/dev/null; git fetch -q origin
+printf 'from __future__ import annotations\n\nimport sys  # noqa: F401\n' > src/app/sup2.py
+expect suppressions 1 'src/app/sup2.py: `noqa: F401` count 1 \(was 0\)'
+printf 'noqa:F401|the import registers a codec\n' >> $A
+expect suppressions 0 ''
+git checkout -q -- $A; rm src/app/sup2.py; git push -qf origin main:main 2>/dev/null; git fetch -q origin
 mkdir -p web; printf '// eslint-disable-next-line no-console\nconsole.log(1)\n' > web/log.ts
 expect suppressions 1 'web/log.ts: `eslint-disable: no-console` count 1'
 rm -r web
 printf 'token: %s # gitleaks:allow\n' "$(token)" > config.yml
 expect suppressions 1 'config.yml: `gitleaks: allow` count 1'
-git add -A; git commit -qm 'chore: allow' -m 'Allow-Suppression: gitleaks: allow'
+printf 'gitleaks: allow | a published test token\n' >> $A
 expect suppressions 0 ''
-git reset -q --hard HEAD~1
+git checkout -q -- $A; rm config.yml
 printf 'caf\xe9 au lait\n' > docs/latin.txt; printf 'caf\xe9\n' > src/app/new.txt
 expect suppressions 0 ''
 git checkout -q -- docs/latin.txt; rm src/app/new.txt
