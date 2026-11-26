@@ -16,7 +16,7 @@ The arguments set the scope:
 - `#N`, an issue URL, or a title: select that issue
 - a PR number, URL, or reference to the current PR: resume that open loop PR
 
-The request authorizes cleanup, branches, pushes, opening and editing the PR, independent review, PR comments, filing issues for valid findings outside the issue, merging, issue closure, and deletion of task branches and worktrees. Delete only what the loop created. Never discard, overwrite, reformat, or commit unrelated user changes. Run issues sequentially, with at most one loop PR open. Pause only for the stop conditions below.
+The request authorizes cleanup, branches, pushes, opening and editing the PR, independent review, filing issues for valid findings outside the issue, merging, issue closure, and deletion of task branches and worktrees. Delete only what the loop created. Never discard, overwrite, reformat, or commit unrelated user changes. Run issues sequentially, with at most one loop PR open. Pause only for the stop conditions below.
 
 Done when every issue in scope is merged and closed, cleanup is verified, and the report is sent, or a stop condition is reported.
 
@@ -109,7 +109,7 @@ Rerun affected gates, push, and handle checks as in step 7. Start each round as 
 
 ## 9. Record the review and wait for green
 
-After `APPROVE` and after any pending check passes, confirm the head matches the reviewed head. Post the reviewer's section 6 report from the final round as a PR comment, with `## Independent review report` as its first line followed by the same four lines below, then the report. In the comment, cite evidence by command and result, use repository-relative paths, and leave out machine-local paths and personal identifiers. Then replace `## Independent review` with exactly:
+After `APPROVE` and after any pending check passes, confirm the head matches the reviewed head. Then replace `## Independent review` with exactly:
 
 ```text
 ## Independent review
