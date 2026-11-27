@@ -35,6 +35,32 @@ cp -R astack/skills/* ~/.codex/skills/
 cp astack/AGENTS.md ~/.codex/AGENTS.md
 ```
 
+## Hook
+
+[`hooks/no_new_markdown.py`](hooks/no_new_markdown.py) is a Claude Code `PreToolUse` hook that stops the agent from writing a new Markdown file. It allows `AGENTS.md`, `CLAUDE.md`, `SKILL.md`, `README.md`, edits to existing files, and files under the temporary directory. To allow another folder, add it to `ALLOWED_ROOTS`. Install it:
+
+```bash
+mkdir -p ~/.claude/hooks
+cp astack/hooks/no_new_markdown.py ~/.claude/hooks/
+```
+
+Then register it in `~/.claude/settings.json`:
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          { "type": "command", "command": "python3 $HOME/.claude/hooks/no_new_markdown.py", "timeout": 10 }
+        ]
+      }
+    ]
+  }
+}
+```
+
 ## Requirements
 
 - An authenticated [GitHub CLI](https://cli.github.com) (`gh`) for `ship`, and for `audit` when it files issues.
