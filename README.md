@@ -1,6 +1,10 @@
 # astack
 
-The agent instructions and skills I use every day. They work in both Claude Code and Codex.
+The agent instructions, skills and hooks I use every day.
+
+## Instructions
+
+[`AGENTS.md`](AGENTS.md) holds the rules for every session: communication, safety, and when to load `unslop`, `engineering`, `instructions`, and `design`.
 
 ## Skills
 
@@ -16,14 +20,18 @@ The agent instructions and skills I use every day. They work in both Claude Code
 | [`unslop`](skills/unslop/SKILL.md) | (automatic) | Rules for plain prose: no AI vocabulary, no dashes, and one idea per sentence. |
 | [`instructions`](skills/instructions/SKILL.md) | (automatic) | Rules for writing and pruning `AGENTS.md` and `SKILL.md` files. |
 
-[`AGENTS.md`](AGENTS.md) holds the rules for every session: communication, safety, and when to load `unslop`, `engineering`, `instructions`, and `design`.
-
 Some skills call others. Install the ones they need too:
 
 - `ship` uses `review`, `audit`, and `engineering`.
 - `audit` uses `review`.
 - `review` uses `verify`.
 - `engineering` uses `review`, `verify`, `ship`, and `unslop`.
+
+## Hooks
+
+| Hook | Runs on | What it does |
+|---|---|---|
+| [`bash_checks.py`](hooks/bash_checks.py) | every Bash command | Refuses a command that uses zsh's `$var:x` history modifier and names `${var}:path` instead. |
 
 ## Install
 
@@ -35,6 +43,26 @@ cp -R astack/skills/* ~/.codex/skills/
 cp astack/AGENTS.md ~/.codex/AGENTS.md
 ```
 
+To install the hooks, copy them and register each one in `~/.claude/settings.json`:
+
+```bash
+mkdir -p ~/.claude/hooks
+cp astack/hooks/*.py ~/.claude/hooks/
+```
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [{ "type": "command", "command": "python3 $HOME/.claude/hooks/bash_checks.py", "timeout": 10 }]
+      }
+    ]
+  }
+}
+```
+
 ## Requirements
 
 - An authenticated [GitHub CLI](https://cli.github.com) (`gh`) for `ship`, and for `audit` when it files issues.
@@ -42,7 +70,7 @@ cp astack/AGENTS.md ~/.codex/AGENTS.md
 - `uv`, `ruff`, and `ty` for Python work under `engineering`.
 - [`git-cow-worktree`](https://github.com/josharian/git-cow-worktree) on `PATH` for the worktrees `engineering` creates (`go install github.com/josharian/git-cow-worktree@latest`).
 - Lean 4 or Dafny for proofs in `verify`, when a property needs one.
-- Python 3.11 or later for the `guardrails` checks, and gitleaks 8.30.1 or later for its secret scan.
+- Python 3.11 or later for the `guardrails` checks and the hook in [`hooks/`](hooks), and gitleaks 8.30.1 or later for the secret scan in `guardrails`.
 
 ## Make them yours
 
