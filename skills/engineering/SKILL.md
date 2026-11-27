@@ -20,6 +20,7 @@ Build complex things as simply as possible. In every problem, look for complexit
 ## Standing rules
 
 - No comments. Source files have no comments or docstrings in any language. The only `#` or `//` lines are shebangs and tool pragmas (`noqa`, `type: ignore`, `isort`, `pragma`, `fmt`). Put what a comment would say in a name, a type, a test, or the PR description, and put user-facing help in the framework's help argument. Remove every comment in a file you edit.
+- No new Markdown files. Put what a new document would say in a name, a type, a test, a lint rule, CLI help, or the commit message or PR body, or edit the existing document it belongs in. Only `AGENTS.md`, `SKILL.md`, `README.md`, and files in temporary directories may be created.
 - No session history in the work. Code, names, tests, and docs describe the code as it is, never how it used to be: no "now uses", "previously", "used to be X", "changed from X to Y". PR and issue text may state what the change does and why.
 - For Python, use Astral's tools only: `uv`, `ruff`, and `ty`. Report `ty` gaps rather than switching type checkers.
 - Reach for the standard library and existing dependencies first. Add a maintained library only when it meets the requirements, security included, and reduces the total work once integration and maintenance count. Prefer its extension points to a fork. When API behaviour is unclear, read the official docs for the pinned version, and never upgrade to match a newer example.
