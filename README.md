@@ -40,6 +40,7 @@ cp astack/AGENTS.md ~/.codex/AGENTS.md
 - An authenticated [GitHub CLI](https://cli.github.com) (`gh`) for `ship`, and for `audit` when it files issues.
 - Subagents for `design`, and for the reviewer that `ship` starts.
 - `uv`, `ruff`, and `ty` for Python work under `engineering`.
+- [`git-cow-worktree`](https://github.com/josharian/git-cow-worktree) on `PATH` for the worktrees `engineering` creates (`go install github.com/josharian/git-cow-worktree@latest`).
 - Lean 4 or Dafny for proofs in `verify`, when a property needs one.
 - Python 3.11 or later for the `guardrails` checks, and gitleaks 8.30.1 or later for its secret scan.
 
